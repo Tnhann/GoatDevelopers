@@ -27,10 +27,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.3.12",
-<<<<<<< HEAD
-=======
     "@types/react-native-vector-icons": "^6.4.18",
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
     "typescript": "^5.3.3"
   },
   "private": true

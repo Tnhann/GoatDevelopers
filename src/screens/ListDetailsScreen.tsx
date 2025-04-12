@@ -4,7 +4,7 @@ import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snac
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
-import { collection, getDocs, addDoc, query, where, doc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where, doc, deleteDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from '../config/firebase';
 
 type ListDetailsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'ListDetails'>;
@@ -35,28 +35,49 @@ const ListDetailsScreen = () => {
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [newWord, setNewWord] = useState({
     word: '',
     translation: '',
     example: ''
   });
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    fetchWordList();
-    fetchWords();
+    checkListOwnership();
   }, [listId]);
 
-  const fetchWordList = async () => {
+  const checkListOwnership = async () => {
     try {
-      const docRef = doc(db, 'wordLists', listId);
-      const docSnap = await getDocs(collection(db, 'wordLists'));
-      const list = docSnap.docs.find(doc => doc.id === listId)?.data() as WordList;
-      setWordList(list);
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        setError('Oturumunuz sonlanmış. Lütfen tekrar giriş yapın.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const listRef = doc(db, 'wordLists', listId);
+      const listDoc = await getDoc(listRef);
+
+      if (!listDoc.exists()) {
+        setError('Liste bulunamadı.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const listData = listDoc.data();
+      setIsOwner(listData.userId === userId);
+      
+      if (listData.userId === userId) {
+        fetchWords();
+      } else {
+        setError('Bu listeye erişim yetkiniz yok.');
+        setSnackbarVisible(true);
+      }
     } catch (error) {
-      console.error('Error fetching word list:', error);
-      setError('Liste yüklenirken bir hata oluştu');
+      console.error('Error checking list ownership:', error);
+      setError('Liste bilgileri alınırken bir hata oluştu.');
       setSnackbarVisible(true);
     }
   };
@@ -80,16 +101,32 @@ const ListDetailsScreen = () => {
   };
 
   const handleAddWord = async () => {
+    if (!newWord.word.trim() || !newWord.translation.trim()) {
+      setError('Lütfen kelime ve çevirisini girin.');
+      setSnackbarVisible(true);
+      return;
+    }
+
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) {
-        setError('Kullanıcı girişi yapılmamış');
+        setError('Oturumunuz sonlanmış. Lütfen tekrar giriş yapın.');
         setSnackbarVisible(true);
         return;
       }
 
-      if (!newWord.word.trim() || !newWord.translation.trim()) {
-        setError('Lütfen kelime ve çevirisini girin');
+      const listRef = doc(db, 'wordLists', listId);
+      const listDoc = await getDoc(listRef);
+
+      if (!listDoc.exists()) {
+        setError('Liste bulunamadı.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const listData = listDoc.data();
+      if (listData.userId !== userId) {
+        setError('Bu listeye kelime ekleme yetkiniz yok.');
         setSnackbarVisible(true);
         return;
       }
@@ -99,12 +136,13 @@ const ListDetailsScreen = () => {
         ...newWord,
         createdAt: new Date()
       });
+
       setNewWord({ word: '', translation: '', example: '' });
       setModalVisible(false);
       fetchWords();
     } catch (error) {
       console.error('Error adding word:', error);
-      setError('Kelime eklenirken bir hata oluştu');
+      setError('Kelime eklenirken bir hata oluştu.');
       setSnackbarVisible(true);
     }
   };
@@ -188,11 +226,13 @@ const ListDetailsScreen = () => {
         ListHeaderComponent={renderHeader}
       />
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        onPress={() => setModalVisible(true)}
-      />
+      {isOwner && (
+        <FAB
+          icon="plus"
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          onPress={() => setModalVisible(true)}
+        />
+      )}
 
       <Portal>
         <Modal
@@ -205,27 +245,40 @@ const ListDetailsScreen = () => {
             label="Kelime"
             value={newWord.word}
             onChangeText={text => setNewWord({ ...newWord, word: text })}
+            mode="outlined"
             style={styles.input}
           />
           <TextInput
             label="Çeviri"
             value={newWord.translation}
             onChangeText={text => setNewWord({ ...newWord, translation: text })}
+            mode="outlined"
             style={styles.input}
           />
           <TextInput
             label="Örnek Cümle"
             value={newWord.example}
             onChangeText={text => setNewWord({ ...newWord, example: text })}
+            mode="outlined"
             style={styles.input}
+            multiline
           />
-          <Button
-            mode="contained"
-            onPress={handleAddWord}
-            style={styles.addButton}
-          >
-            Ekle
-          </Button>
+          <View style={styles.modalButtons}>
+            <Button
+              mode="outlined"
+              onPress={() => setModalVisible(false)}
+              style={styles.modalButton}
+            >
+              İptal
+            </Button>
+            <Button
+              mode="contained"
+              onPress={handleAddWord}
+              style={styles.modalButton}
+            >
+              Ekle
+            </Button>
+          </View>
         </Modal>
       </Portal>
 
@@ -293,13 +346,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modalTitle: {
-    marginBottom: 16,
+    marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     marginBottom: 16,
   },
-  addButton: {
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     marginTop: 16,
+  },
+  modalButton: {
+    marginLeft: 8,
   },
 });
 

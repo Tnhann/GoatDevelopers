@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-<<<<<<< HEAD
-import { Text, Button, useTheme, Appbar, Card, RadioButton } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
-
-=======
 import { Text, Button, useTheme, Appbar, Card, RadioButton, ProgressBar } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -16,7 +9,6 @@ import { db } from '../config/firebase';
 
 type QuizModeScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'QuizMode'>;
 
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 interface Word {
   id: string;
   word: string;
@@ -26,11 +18,7 @@ interface Word {
 
 const QuizModeScreen = () => {
   const theme = useTheme();
-<<<<<<< HEAD
-  const navigation = useNavigation();
-=======
   const navigation = useNavigation<QuizModeScreenNavigationProp>();
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const route = useRoute();
   const { listId } = route.params as { listId: string };
 
@@ -40,18 +28,13 @@ const QuizModeScreen = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [options, setOptions] = useState<string[]>([]);
-<<<<<<< HEAD
-=======
   const [timeLeft, setTimeLeft] = useState(10);
   const [timerActive, setTimerActive] = useState(true);
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 
   useEffect(() => {
     fetchWords();
   }, [listId]);
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (timerActive && timeLeft > 0) {
@@ -67,13 +50,11 @@ const QuizModeScreen = () => {
   const handleTimeUp = () => {
     setTimerActive(false);
     setShowResult(true);
-    // Zaman dolduğunda otomatik olarak bir sonraki soruya geç
     setTimeout(() => {
       handleNext();
     }, 2000);
   };
 
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const fetchWords = async () => {
     try {
       const wordsRef = collection(db, 'wordLists', listId, 'words');
@@ -84,23 +65,17 @@ const QuizModeScreen = () => {
       })) as Word[];
       setWords(wordList);
       generateOptions(wordList);
-<<<<<<< HEAD
-=======
       resetTimer();
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
     } catch (error) {
       console.error('Error fetching words:', error);
     }
   };
 
-<<<<<<< HEAD
-=======
   const resetTimer = () => {
     setTimeLeft(10);
     setTimerActive(true);
   };
 
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const generateOptions = (wordList: Word[]) => {
     if (wordList.length < 4) return;
     
@@ -120,10 +95,7 @@ const QuizModeScreen = () => {
       setScore(score + 1);
     }
     setShowResult(true);
-<<<<<<< HEAD
-=======
     setTimerActive(false);
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   };
 
   const handleNext = () => {
@@ -132,17 +104,13 @@ const QuizModeScreen = () => {
       setSelectedAnswer(null);
       setShowResult(false);
       generateOptions(words);
-<<<<<<< HEAD
-=======
       resetTimer();
     } else {
-      // Quiz bitti, sonuçları göster
       navigation.navigate('QuizResults', { 
         score, 
         totalQuestions: words.length,
         listId 
       });
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
     }
   };
 
@@ -153,13 +121,20 @@ const QuizModeScreen = () => {
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
         <Appbar.Content title="Quiz Modu" />
-<<<<<<< HEAD
       </Appbar.Header>
 
       <View style={styles.content}>
         <Card style={styles.scoreCard}>
           <Card.Content>
             <Text variant="titleLarge">Skor: {score}/{words.length}</Text>
+            <ProgressBar
+              progress={timeLeft / 10}
+              color={theme.colors.primary}
+              style={styles.timer}
+            />
+            <Text variant="bodyMedium" style={styles.timerText}>
+              Kalan Süre: {timeLeft} saniye
+            </Text>
           </Card.Content>
         </Card>
 
@@ -204,93 +179,25 @@ const QuizModeScreen = () => {
                     : `Yanlış! Doğru cevap: ${currentWord.translation}`}
                 </Text>
               )}
-
-              <View style={styles.buttonContainer}>
-                {!showResult ? (
-                  <Button
-                    mode="contained"
-                    onPress={handleAnswer}
-                    disabled={!selectedAnswer}
-                  >
-                    Cevapla
-                  </Button>
-                ) : (
-                  <Button
-                    mode="contained"
-                    onPress={handleNext}
-                    disabled={currentIndex === words.length - 1}
-                  >
-                    {currentIndex === words.length - 1 ? 'Quiz Bitti' : 'Sonraki'}
-                  </Button>
-                )}
-              </View>
             </Card.Content>
           </Card>
-=======
-        <Appbar.Action icon="timer" />
-        <Text style={styles.timer}>{timeLeft}s</Text>
-      </Appbar.Header>
+        )}
 
-      <View style={styles.progressContainer}>
-        <ProgressBar 
-          progress={timeLeft / 10} 
-          color={timeLeft > 3 ? theme.colors.primary : theme.colors.error}
-          style={styles.progressBar}
-        />
-      </View>
-
-      <View style={styles.content}>
-        <Card style={styles.questionCard}>
-          <Card.Content>
-            <Text variant="headlineMedium" style={styles.question}>
-              {currentWord?.word}
-            </Text>
-          </Card.Content>
-        </Card>
-
-        <View style={styles.optionsContainer}>
-          {options.map((option, index) => (
-            <Card
-              key={index}
-              style={[
-                styles.optionCard,
-                showResult && {
-                  backgroundColor: option === words[currentIndex].translation
-                    ? theme.colors.primaryContainer
-                    : selectedAnswer === option
-                    ? theme.colors.errorContainer
-                    : undefined
-                }
-              ]}
-              onPress={() => !showResult && setSelectedAnswer(option)}
+        <View style={styles.buttons}>
+          {!showResult ? (
+            <Button
+              mode="contained"
+              onPress={handleAnswer}
+              disabled={!selectedAnswer}
             >
-              <Card.Content>
-                <Text variant="bodyLarge">{option}</Text>
-              </Card.Content>
-            </Card>
-          ))}
+              Cevapla
+            </Button>
+          ) : (
+            <Button mode="contained" onPress={handleNext}>
+              {currentIndex < words.length - 1 ? 'Sonraki Soru' : 'Sonuçları Gör'}
+            </Button>
+          )}
         </View>
-
-        {!showResult && selectedAnswer && (
-          <Button
-            mode="contained"
-            onPress={handleAnswer}
-            style={styles.submitButton}
-          >
-            Cevapla
-          </Button>
-        )}
-
-        {showResult && (
-          <Button
-            mode="contained"
-            onPress={handleNext}
-            style={styles.nextButton}
-          >
-            {currentIndex < words.length - 1 ? 'Sonraki Soru' : 'Sonuçları Gör'}
-          </Button>
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
-        )}
       </View>
     </View>
   );
@@ -300,70 +207,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-<<<<<<< HEAD
-=======
-  progressContainer: {
-    padding: 16,
-  },
-  progressBar: {
-    height: 8,
-    borderRadius: 4,
-  },
-  timer: {
-    marginRight: 16,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   content: {
     flex: 1,
     padding: 16,
   },
-<<<<<<< HEAD
   scoreCard: {
     marginBottom: 16,
   },
   questionCard: {
-    flex: 1,
+    marginBottom: 16,
   },
   question: {
+    marginBottom: 8,
     textAlign: 'center',
-    marginBottom: 16,
   },
   example: {
-    textAlign: 'center',
+    marginBottom: 16,
     fontStyle: 'italic',
-    marginBottom: 24,
+    textAlign: 'center',
   },
   options: {
-    marginBottom: 24,
+    marginTop: 16,
   },
   result: {
+    marginTop: 16,
     textAlign: 'center',
-    marginBottom: 16,
+    fontWeight: 'bold',
   },
-  buttonContainer: {
-    marginTop: 'auto',
-=======
-  questionCard: {
-    marginBottom: 24,
+  buttons: {
+    marginTop: 16,
   },
-  question: {
+  timer: {
+    marginTop: 8,
+    height: 8,
+  },
+  timerText: {
+    marginTop: 4,
     textAlign: 'center',
-    marginVertical: 16,
-  },
-  optionsContainer: {
-    gap: 12,
-  },
-  optionCard: {
-    marginBottom: 8,
-  },
-  submitButton: {
-    marginTop: 24,
-  },
-  nextButton: {
-    marginTop: 24,
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   },
 });
 

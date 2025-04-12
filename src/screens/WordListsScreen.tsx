@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-<<<<<<< HEAD
-import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snackbar } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParamList } from '../navigation/AppNavigator';
-import { collection, getDocs, addDoc, query, where, doc, setDoc } from 'firebase/firestore';
-=======
 import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snackbar, Menu, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs, addDoc, query, where, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 import { db, auth } from '../config/firebase';
 
 type WordListsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
@@ -24,6 +16,7 @@ interface WordList {
   wordCount: number;
   language: string;
   userId: string;
+  createdAt: Date;
 }
 
 const WordListsScreen = () => {
@@ -32,24 +25,16 @@ const WordListsScreen = () => {
   const [wordLists, setWordLists] = useState<WordList[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-<<<<<<< HEAD
-  const [error, setError] = useState('');
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-=======
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [error, setError] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const [newList, setNewList] = useState({
     title: '',
     description: '',
     language: 'english'
   });
-<<<<<<< HEAD
-=======
   const [editingList, setEditingList] = useState<WordList | null>(null);
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 
   useEffect(() => {
     checkAndCreateSampleList();
@@ -148,13 +133,9 @@ const WordListsScreen = () => {
       
       const listRef = doc(db, 'wordLists', listId);
       await setDoc(listRef, {
-<<<<<<< HEAD
-        ...newList,
-=======
         title: newList.title.trim(),
-        description: newList.description.trim() || '', // Açıklama boş olabilir
+        description: newList.description.trim() || '',
         language: newList.language,
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
         userId,
         wordCount: 0,
         createdAt: new Date()
@@ -170,8 +151,6 @@ const WordListsScreen = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
   const handleDeleteList = async (listId: string) => {
     try {
       const userId = auth.currentUser?.uid;
@@ -201,16 +180,14 @@ const WordListsScreen = () => {
       // Önce alt koleksiyonları sil
       const wordsRef = collection(db, 'wordLists', listId, 'words');
       const wordsSnapshot = await getDocs(wordsRef);
-      const deletePromises = wordsSnapshot.docs.map(doc => 
-        deleteDoc(doc.ref)
-      );
+      const deletePromises = wordsSnapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
 
-      // Ana listeyi sil
+      // Sonra listeyi sil
       await deleteDoc(listRef);
-      
-      // Listeyi state'den kaldır
-      setWordLists(wordLists.filter(list => list.id !== listId));
+
+      // Local state'i güncelle
+      setWordLists(prevLists => prevLists.filter(list => list.id !== listId));
       setMenuVisible(null);
     } catch (error) {
       console.error('Error deleting word list:', error);
@@ -253,15 +230,11 @@ const WordListsScreen = () => {
     }
   };
 
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const renderWordList = ({ item }: { item: WordList }) => (
     <Card style={styles.card}>
       <Card.Content>
         <View style={styles.cardHeader}>
-          <Icon source="book" size={24} color={theme.colors.primary} />
           <Text variant="titleMedium" style={styles.cardTitle}>{item.title}</Text>
-<<<<<<< HEAD
-=======
           <Menu
             visible={menuVisible === item.id}
             onDismiss={() => setMenuVisible(null)}
@@ -274,39 +247,29 @@ const WordListsScreen = () => {
           >
             <Menu.Item
               onPress={() => {
-                setEditingList(item);
-                setNewList({
-                  title: item.title,
-                  description: item.description,
-                  language: item.language
-                });
-                setEditModalVisible(true);
                 setMenuVisible(null);
+                handleDeleteList(item.id);
               }}
-              title="Düzenle"
-              leadingIcon="pencil"
-            />
-            <Menu.Item
-              onPress={() => handleDeleteList(item.id)}
               title="Sil"
               leadingIcon="delete"
             />
           </Menu>
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
         </View>
-        <Text variant="bodyMedium" style={styles.description}>{item.description}</Text>
-        <View style={styles.cardFooter}>
-          <Text variant="bodySmall" style={styles.metaInfo}>
-            {item.wordCount} kelime • {item.language}
-          </Text>
-          <Button
-            mode="contained"
-            onPress={() => navigation.navigate('ListDetails', { listId: item.id })}
-          >
-            Detaylar
-          </Button>
-        </View>
+        <Text variant="bodyMedium" style={styles.cardDescription}>
+          {item.description}
+        </Text>
+        <Text variant="bodySmall" style={styles.cardInfo}>
+          {item.wordCount} kelime
+        </Text>
       </Card.Content>
+      <Card.Actions>
+        <Button
+          mode="contained"
+          onPress={() => navigation.navigate('ListDetails', { listId: item.id })}
+        >
+          Kelimeleri Gör
+        </Button>
+      </Card.Actions>
     </Card>
   );
 
@@ -333,55 +296,36 @@ const WordListsScreen = () => {
         >
           <Text variant="headlineSmall" style={styles.modalTitle}>Yeni Liste Oluştur</Text>
           <TextInput
-            label="Başlık"
+            label="Liste Başlığı"
             value={newList.title}
             onChangeText={text => setNewList({ ...newList, title: text })}
+            mode="outlined"
             style={styles.input}
           />
           <TextInput
             label="Açıklama"
             value={newList.description}
             onChangeText={text => setNewList({ ...newList, description: text })}
+            mode="outlined"
             style={styles.input}
           />
-          <Button
-            mode="contained"
-            onPress={handleCreateList}
-            style={styles.addButton}
-          >
-            Oluştur
-          </Button>
+          <View style={styles.modalButtons}>
+            <Button
+              mode="outlined"
+              onPress={() => setModalVisible(false)}
+              style={styles.modalButton}
+            >
+              İptal
+            </Button>
+            <Button
+              mode="contained"
+              onPress={handleCreateList}
+              style={styles.modalButton}
+            >
+              Oluştur
+            </Button>
+          </View>
         </Modal>
-<<<<<<< HEAD
-=======
-
-        <Modal
-          visible={editModalVisible}
-          onDismiss={() => setEditModalVisible(false)}
-          contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
-        >
-          <Text variant="headlineSmall" style={styles.modalTitle}>Listeyi Düzenle</Text>
-          <TextInput
-            label="Başlık"
-            value={newList.title}
-            onChangeText={text => setNewList({ ...newList, title: text })}
-            style={styles.input}
-          />
-          <TextInput
-            label="Açıklama"
-            value={newList.description}
-            onChangeText={text => setNewList({ ...newList, description: text })}
-            style={styles.input}
-          />
-          <Button
-            mode="contained"
-            onPress={handleEditList}
-            style={styles.addButton}
-          >
-            Kaydet
-          </Button>
-        </Modal>
->>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
       </Portal>
 
       <Snackbar
@@ -407,26 +351,22 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 16,
+    elevation: 2,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  cardTitle: {
-    marginLeft: 8,
-    flex: 1,
-  },
-  description: {
-    marginBottom: 16,
-  },
-  cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  metaInfo: {
-    color: '#666',
+  cardTitle: {
+    flex: 1,
+  },
+  cardDescription: {
+    marginTop: 8,
+  },
+  cardInfo: {
+    marginTop: 8,
+    opacity: 0.7,
   },
   fab: {
     position: 'absolute',
@@ -440,13 +380,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   modalTitle: {
-    marginBottom: 16,
+    marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     marginBottom: 16,
   },
-  addButton: {
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     marginTop: 16,
+  },
+  modalButton: {
+    marginLeft: 8,
   },
 });
 
