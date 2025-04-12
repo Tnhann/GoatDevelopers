@@ -32,7 +32,7 @@ const SettingsScreen = () => {
 
   const handlePrivacyPress = () => {
     // Gizlilik politikası sayfasına yönlendirme
-    Alert.alert('Gizlilik Politikası', 'Bu özellik yakında eklenecek');
+    navigation.navigate('PrivacyPolicy');
   };
 
   return (

@@ -19,6 +19,7 @@ import LearningModeScreen from '../screens/LearningModeScreen';
 import QuizResultsScreen from '../screens/QuizResultsScreen';
 import ProfileEditScreen from '../screens/ProfileEditScreen';
 import AboutScreen from '../screens/AboutScreen';
+import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -45,6 +46,7 @@ export type MainStackParamList = {
   Statistics: undefined;
   ProfileEdit: undefined;
   About: undefined;
+  PrivacyPolicy: undefined;
 };
 
 export type MainTabParamList = {
@@ -185,6 +187,14 @@ const MainNavigator = () => {
         component={AboutScreen} 
         options={{ 
           title: 'Hakkında',
+          headerShown: true 
+        }} 
+      />
+      <MainStack.Screen 
+        name="PrivacyPolicy" 
+        component={PrivacyPolicyScreen} 
+        options={{ 
+          title: 'Gizlilik Politikası',
           headerShown: true 
         }} 
       />
