@@ -16,6 +16,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import QuizModeScreen from '../screens/QuizModeScreen';
 import LearningModeScreen from '../screens/LearningModeScreen';
+import QuizResultsScreen from '../screens/QuizResultsScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -32,6 +33,11 @@ export type MainStackParamList = {
   MainTabs: { screen: 'Home' | 'WordLists' | 'Profile' };
   ListDetails: { listId: string };
   QuizMode: { listId: string };
+  QuizResults: { 
+    score: number;
+    totalQuestions: number;
+    listId: string;
+  };
   LearningMode: { listId: string };
   Settings: undefined;
   Statistics: undefined;
@@ -141,6 +147,11 @@ const MainNavigator = () => {
         name="QuizMode"
         component={QuizModeScreen}
         options={{ title: 'Quiz Modu' }}
+      />
+      <MainStack.Screen
+        name="QuizResults"
+        component={QuizResultsScreen}
+        options={{ title: 'Quiz Sonuçları' }}
       />
       <MainStack.Screen
         name="LearningMode"
