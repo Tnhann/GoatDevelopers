@@ -51,6 +51,9 @@ const WordListsScreen = () => {
       
       // Eğer kullanıcının hiç listesi yoksa örnek liste oluştur
       if (querySnapshot.empty) {
+        // Benzersiz bir liste ID'si oluştur
+        const listId = `list_${userId}_${Date.now()}`;
+        
         const sampleList = {
           title: 'İngilizce Kelimeler',
           description: 'Günlük kullanılan İngilizce kelimeler',
@@ -60,10 +63,10 @@ const WordListsScreen = () => {
           createdAt: new Date()
         };
 
-        const listRef = doc(db, 'wordLists', 'eLBwh7JJStWrMCG3wwJe');
+        const listRef = doc(db, 'wordLists', listId);
         await setDoc(listRef, sampleList);
 
-        const wordsRef = collection(db, 'wordLists', 'eLBwh7JJStWrMCG3wwJe', 'words');
+        const wordsRef = collection(db, 'wordLists', listId, 'words');
         
         const sampleWords = [
           {
@@ -121,12 +124,17 @@ const WordListsScreen = () => {
         return;
       }
 
-      await addDoc(collection(db, 'wordLists'), {
+      // Benzersiz bir liste ID'si oluştur
+      const listId = `list_${userId}_${Date.now()}`;
+      
+      const listRef = doc(db, 'wordLists', listId);
+      await setDoc(listRef, {
         ...newList,
         userId,
         wordCount: 0,
         createdAt: new Date()
       });
+
       setNewList({ title: '', description: '', language: 'english' });
       setModalVisible(false);
       checkAndCreateSampleList();
