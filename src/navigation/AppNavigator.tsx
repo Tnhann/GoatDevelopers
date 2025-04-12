@@ -17,6 +17,8 @@ import StatisticsScreen from '../screens/StatisticsScreen';
 import QuizModeScreen from '../screens/QuizModeScreen';
 import LearningModeScreen from '../screens/LearningModeScreen';
 import QuizResultsScreen from '../screens/QuizResultsScreen';
+import ProfileEditScreen from '../screens/ProfileEditScreen';
+import AboutScreen from '../screens/AboutScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -41,6 +43,8 @@ export type MainStackParamList = {
   LearningMode: { listId: string };
   Settings: undefined;
   Statistics: undefined;
+  ProfileEdit: undefined;
+  About: undefined;
 };
 
 export type MainTabParamList = {
@@ -167,6 +171,22 @@ const MainNavigator = () => {
         name="Statistics"
         component={StatisticsScreen}
         options={{ title: 'İstatistikler' }}
+      />
+      <MainStack.Screen 
+        name="ProfileEdit" 
+        component={ProfileEditScreen} 
+        options={{ 
+          title: 'Profil Düzenle',
+          headerShown: true 
+        }} 
+      />
+      <MainStack.Screen 
+        name="About" 
+        component={AboutScreen} 
+        options={{ 
+          title: 'Hakkında',
+          headerShown: true 
+        }} 
       />
     </MainStack.Navigator>
   );
