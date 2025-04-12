@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
+<<<<<<< HEAD
 import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snackbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs, addDoc, query, where, doc, setDoc } from 'firebase/firestore';
+=======
+import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snackbar, Menu, IconButton } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainStackParamList } from '../navigation/AppNavigator';
+import { collection, getDocs, addDoc, query, where, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 import { db, auth } from '../config/firebase';
 
 type WordListsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
@@ -24,13 +32,24 @@ const WordListsScreen = () => {
   const [wordLists, setWordLists] = useState<WordList[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
+<<<<<<< HEAD
   const [error, setError] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+=======
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [error, setError] = useState('');
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState<string | null>(null);
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const [newList, setNewList] = useState({
     title: '',
     description: '',
     language: 'english'
   });
+<<<<<<< HEAD
+=======
+  const [editingList, setEditingList] = useState<WordList | null>(null);
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 
   useEffect(() => {
     checkAndCreateSampleList();
@@ -129,7 +148,13 @@ const WordListsScreen = () => {
       
       const listRef = doc(db, 'wordLists', listId);
       await setDoc(listRef, {
+<<<<<<< HEAD
         ...newList,
+=======
+        title: newList.title.trim(),
+        description: newList.description.trim() || '', // Açıklama boş olabilir
+        language: newList.language,
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
         userId,
         wordCount: 0,
         createdAt: new Date()
@@ -145,12 +170,129 @@ const WordListsScreen = () => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const handleDeleteList = async (listId: string) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        setError('Kullanıcı girişi yapılmamış');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      // Önce listeyi kontrol et
+      const listRef = doc(db, 'wordLists', listId);
+      const listDoc = await getDoc(listRef);
+      
+      if (!listDoc.exists()) {
+        setError('Liste bulunamadı');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const listData = listDoc.data();
+      if (listData.userId !== userId) {
+        setError('Bu listeyi silme yetkiniz yok');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      // Önce alt koleksiyonları sil
+      const wordsRef = collection(db, 'wordLists', listId, 'words');
+      const wordsSnapshot = await getDocs(wordsRef);
+      const deletePromises = wordsSnapshot.docs.map(doc => 
+        deleteDoc(doc.ref)
+      );
+      await Promise.all(deletePromises);
+
+      // Ana listeyi sil
+      await deleteDoc(listRef);
+      
+      // Listeyi state'den kaldır
+      setWordLists(wordLists.filter(list => list.id !== listId));
+      setMenuVisible(null);
+    } catch (error) {
+      console.error('Error deleting word list:', error);
+      setError('Liste silinirken bir hata oluştu');
+      setSnackbarVisible(true);
+    }
+  };
+
+  const handleEditList = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId || !editingList) {
+        setError('Kullanıcı girişi yapılmamış veya düzenlenecek liste bulunamadı');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      if (!newList.title.trim()) {
+        setError('Lütfen bir başlık girin');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const listRef = doc(db, 'wordLists', editingList.id);
+      await setDoc(listRef, {
+        ...editingList,
+        title: newList.title,
+        description: newList.description,
+        language: newList.language
+      }, { merge: true });
+
+      setNewList({ title: '', description: '', language: 'english' });
+      setEditingList(null);
+      setEditModalVisible(false);
+      checkAndCreateSampleList();
+    } catch (error) {
+      console.error('Error editing word list:', error);
+      setError('Liste düzenlenirken bir hata oluştu');
+      setSnackbarVisible(true);
+    }
+  };
+
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
   const renderWordList = ({ item }: { item: WordList }) => (
     <Card style={styles.card}>
       <Card.Content>
         <View style={styles.cardHeader}>
           <Icon source="book" size={24} color={theme.colors.primary} />
           <Text variant="titleMedium" style={styles.cardTitle}>{item.title}</Text>
+<<<<<<< HEAD
+=======
+          <Menu
+            visible={menuVisible === item.id}
+            onDismiss={() => setMenuVisible(null)}
+            anchor={
+              <IconButton
+                icon="dots-vertical"
+                onPress={() => setMenuVisible(item.id)}
+              />
+            }
+          >
+            <Menu.Item
+              onPress={() => {
+                setEditingList(item);
+                setNewList({
+                  title: item.title,
+                  description: item.description,
+                  language: item.language
+                });
+                setEditModalVisible(true);
+                setMenuVisible(null);
+              }}
+              title="Düzenle"
+              leadingIcon="pencil"
+            />
+            <Menu.Item
+              onPress={() => handleDeleteList(item.id)}
+              title="Sil"
+              leadingIcon="delete"
+            />
+          </Menu>
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
         </View>
         <Text variant="bodyMedium" style={styles.description}>{item.description}</Text>
         <View style={styles.cardFooter}>
@@ -210,6 +352,36 @@ const WordListsScreen = () => {
             Oluştur
           </Button>
         </Modal>
+<<<<<<< HEAD
+=======
+
+        <Modal
+          visible={editModalVisible}
+          onDismiss={() => setEditModalVisible(false)}
+          contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
+        >
+          <Text variant="headlineSmall" style={styles.modalTitle}>Listeyi Düzenle</Text>
+          <TextInput
+            label="Başlık"
+            value={newList.title}
+            onChangeText={text => setNewList({ ...newList, title: text })}
+            style={styles.input}
+          />
+          <TextInput
+            label="Açıklama"
+            value={newList.description}
+            onChangeText={text => setNewList({ ...newList, description: text })}
+            style={styles.input}
+          />
+          <Button
+            mode="contained"
+            onPress={handleEditList}
+            style={styles.addButton}
+          >
+            Kaydet
+          </Button>
+        </Modal>
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
       </Portal>
 
       <Snackbar

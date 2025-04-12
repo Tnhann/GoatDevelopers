@@ -16,6 +16,12 @@ import SettingsScreen from '../screens/SettingsScreen';
 import StatisticsScreen from '../screens/StatisticsScreen';
 import QuizModeScreen from '../screens/QuizModeScreen';
 import LearningModeScreen from '../screens/LearningModeScreen';
+<<<<<<< HEAD
+=======
+import QuizResultsScreen from '../screens/QuizResultsScreen';
+import ProfileEditScreen from '../screens/ProfileEditScreen';
+import AboutScreen from '../screens/AboutScreen';
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -32,9 +38,22 @@ export type MainStackParamList = {
   MainTabs: { screen: 'Home' | 'WordLists' | 'Profile' };
   ListDetails: { listId: string };
   QuizMode: { listId: string };
+<<<<<<< HEAD
   LearningMode: { listId: string };
   Settings: undefined;
   Statistics: undefined;
+=======
+  QuizResults: { 
+    score: number;
+    totalQuestions: number;
+    listId: string;
+  };
+  LearningMode: { listId: string };
+  Settings: undefined;
+  Statistics: undefined;
+  ProfileEdit: undefined;
+  About: undefined;
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
 };
 
 export type MainTabParamList = {
@@ -143,6 +162,14 @@ const MainNavigator = () => {
         options={{ title: 'Quiz Modu' }}
       />
       <MainStack.Screen
+<<<<<<< HEAD
+=======
+        name="QuizResults"
+        component={QuizResultsScreen}
+        options={{ title: 'Quiz Sonuçları' }}
+      />
+      <MainStack.Screen
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
         name="LearningMode"
         component={LearningModeScreen}
         options={{ title: 'Öğrenme Modu' }}
@@ -157,6 +184,25 @@ const MainNavigator = () => {
         component={StatisticsScreen}
         options={{ title: 'İstatistikler' }}
       />
+<<<<<<< HEAD
+=======
+      <MainStack.Screen 
+        name="ProfileEdit" 
+        component={ProfileEditScreen} 
+        options={{ 
+          title: 'Profil Düzenle',
+          headerShown: true 
+        }} 
+      />
+      <MainStack.Screen 
+        name="About" 
+        component={AboutScreen} 
+        options={{ 
+          title: 'Hakkında',
+          headerShown: true 
+        }} 
+      />
+>>>>>>> 71e0de329ca0e5cd00b6ed2ecb7645aba3f44892
     </MainStack.Navigator>
   );
 };
