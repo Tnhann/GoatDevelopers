@@ -218,6 +218,21 @@ const WordListsScreen = () => {
               <Menu.Item
                 onPress={() => {
                   setMenuVisible(null);
+                  // Düzenleme modalini aç
+                  setNewList({
+                    title: item.title,
+                    description: item.description,
+                    language: item.language
+                  });
+                  setEditingList(item);
+                  setEditModalVisible(true);
+                }}
+                title="Düzenle"
+                leadingIcon="pencil"
+              />
+              <Menu.Item
+                onPress={() => {
+                  setMenuVisible(null);
                   handleDeleteList(item.id);
                 }}
                 title="Sil"
@@ -265,6 +280,7 @@ const WordListsScreen = () => {
       />
 
       <Portal>
+        {/* Yeni Liste Oluşturma Modalı */}
         <Modal
           visible={modalVisible}
           onDismiss={() => setModalVisible(false)}
@@ -299,6 +315,53 @@ const WordListsScreen = () => {
               style={styles.modalButton}
             >
               Oluştur
+            </Button>
+          </View>
+        </Modal>
+
+        {/* Liste Düzenleme Modalı */}
+        <Modal
+          visible={editModalVisible}
+          onDismiss={() => {
+            setEditModalVisible(false);
+            setEditingList(null);
+            setNewList({ title: '', description: '', language: 'english' });
+          }}
+          contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
+        >
+          <Text variant="headlineSmall" style={styles.modalTitle}>Listeyi Düzenle</Text>
+          <TextInput
+            label="Liste Başlığı"
+            value={newList.title}
+            onChangeText={text => setNewList({ ...newList, title: text })}
+            mode="outlined"
+            style={styles.input}
+          />
+          <TextInput
+            label="Açıklama"
+            value={newList.description}
+            onChangeText={text => setNewList({ ...newList, description: text })}
+            mode="outlined"
+            style={styles.input}
+          />
+          <View style={styles.modalButtons}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setEditModalVisible(false);
+                setEditingList(null);
+                setNewList({ title: '', description: '', language: 'english' });
+              }}
+              style={styles.modalButton}
+            >
+              İptal
+            </Button>
+            <Button
+              mode="contained"
+              onPress={handleEditList}
+              style={styles.modalButton}
+            >
+              Kaydet
             </Button>
           </View>
         </Modal>

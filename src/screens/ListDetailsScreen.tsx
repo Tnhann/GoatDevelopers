@@ -4,7 +4,7 @@ import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snac
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
-import { collection, getDocs, addDoc, query, where, doc, deleteDoc, getDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where, doc, deleteDoc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { firestore, auth } from '../config/firebase';
 
 type ListDetailsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'ListDetails'>;
@@ -193,12 +193,89 @@ const ListDetailsScreen = () => {
     }
   };
 
+  // Düzenleme için state'ler
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editingWord, setEditingWord] = useState<Word | null>(null);
+
+  // Kelime düzenleme fonksiyonu
+  const handleEditWord = async () => {
+    if (!editingWord) return;
+
+    if (!newWord.word.trim() || !newWord.translation.trim()) {
+      setError('Lütfen kelime ve çevirisini girin.');
+      setSnackbarVisible(true);
+      return;
+    }
+
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        setError('Oturumunuz sonlanmış. Lütfen tekrar giriş yapın.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      // Varsayılan listedeki kelimeler düzenlenemez
+      if (wordList?.isDefault) {
+        setError('Varsayılan listelerdeki kelimeler düzenlenemez.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      // Kelimeyi güncelle
+      const wordRef = doc(firestore, 'users', userId, 'wordLists', listId, 'words', editingWord.id);
+      await setDoc(wordRef, {
+        word: newWord.word.trim(),
+        turkishMeaning: newWord.translation.trim(),
+        example: newWord.example.trim(),
+        updatedAt: new Date()
+      }, { merge: true });
+
+      // Formu sıfırla ve modalı kapat
+      setNewWord({ word: '', translation: '', example: '' });
+      setEditingWord(null);
+      setEditModalVisible(false);
+
+      // Kelimeleri yeniden yükle
+      fetchWords();
+    } catch (error) {
+      console.error('Error editing word:', error);
+      setError('Kelime düzenlenirken bir hata oluştu.');
+      setSnackbarVisible(true);
+    }
+  };
+
   const renderWord = ({ item }: { item: Word }) => (
     <Card style={styles.card}>
       <Card.Content>
         <View style={styles.wordHeader}>
           <Text variant="titleMedium">{item.word}</Text>
           <Text variant="bodyMedium" style={styles.translation}>{item.translation}</Text>
+
+          {isOwner && (
+            <View style={styles.actionButtons}>
+              <Button
+                icon="pencil"
+                mode="text"
+                compact
+                onPress={() => {
+                  setEditingWord(item);
+                  setNewWord({
+                    word: item.word,
+                    translation: item.translation,
+                    example: item.example
+                  });
+                  setEditModalVisible(true);
+                }}
+              />
+              <Button
+                icon="delete"
+                mode="text"
+                compact
+                onPress={() => handleDeleteWord(item.id)}
+              />
+            </View>
+          )}
         </View>
         {item.example && (
           <Text variant="bodySmall" style={styles.example}>{item.example}</Text>
@@ -263,9 +340,13 @@ const ListDetailsScreen = () => {
       )}
 
       <Portal>
+        {/* Yeni Kelime Ekleme Modalı */}
         <Modal
           visible={modalVisible}
-          onDismiss={() => setModalVisible(false)}
+          onDismiss={() => {
+            setModalVisible(false);
+            setNewWord({ word: '', translation: '', example: '' });
+          }}
           contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
         >
           <Text variant="headlineSmall" style={styles.modalTitle}>Yeni Kelime Ekle</Text>
@@ -294,7 +375,10 @@ const ListDetailsScreen = () => {
           <View style={styles.modalButtons}>
             <Button
               mode="outlined"
-              onPress={() => setModalVisible(false)}
+              onPress={() => {
+                setModalVisible(false);
+                setNewWord({ word: '', translation: '', example: '' });
+              }}
               style={styles.modalButton}
             >
               İptal
@@ -305,6 +389,61 @@ const ListDetailsScreen = () => {
               style={styles.modalButton}
             >
               Ekle
+            </Button>
+          </View>
+        </Modal>
+
+        {/* Kelime Düzenleme Modalı */}
+        <Modal
+          visible={editModalVisible}
+          onDismiss={() => {
+            setEditModalVisible(false);
+            setEditingWord(null);
+            setNewWord({ word: '', translation: '', example: '' });
+          }}
+          contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
+        >
+          <Text variant="headlineSmall" style={styles.modalTitle}>Kelimeyi Düzenle</Text>
+          <TextInput
+            label="Kelime"
+            value={newWord.word}
+            onChangeText={text => setNewWord({ ...newWord, word: text })}
+            mode="outlined"
+            style={styles.input}
+          />
+          <TextInput
+            label="Çeviri"
+            value={newWord.translation}
+            onChangeText={text => setNewWord({ ...newWord, translation: text })}
+            mode="outlined"
+            style={styles.input}
+          />
+          <TextInput
+            label="Örnek Cümle"
+            value={newWord.example}
+            onChangeText={text => setNewWord({ ...newWord, example: text })}
+            mode="outlined"
+            style={styles.input}
+            multiline
+          />
+          <View style={styles.modalButtons}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setEditModalVisible(false);
+                setEditingWord(null);
+                setNewWord({ word: '', translation: '', example: '' });
+              }}
+              style={styles.modalButton}
+            >
+              İptal
+            </Button>
+            <Button
+              mode="contained"
+              onPress={handleEditWord}
+              style={styles.modalButton}
+            >
+              Kaydet
             </Button>
           </View>
         </Modal>
@@ -357,6 +496,12 @@ const styles = StyleSheet.create({
   },
   translation: {
     color: '#666',
+    flex: 1,
+    marginHorizontal: 8,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   example: {
     fontStyle: 'italic',
