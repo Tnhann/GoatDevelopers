@@ -75,7 +75,7 @@ const QuizModeScreen = () => {
 
       if (wordList.length > 0) {
         setWords(wordList);
-        generateOptions(wordList);
+        generateOptions();
         resetTimer();
       }
     } catch (error) {
@@ -88,14 +88,14 @@ const QuizModeScreen = () => {
     setTimerActive(true);
   };
 
-  const generateOptions = (wordList: Word[]) => {
-    if (wordList.length < 4) return;
+  const generateOptions = () => {
+    if (words.length < 4) return;
 
-    const currentWord = wordList[currentIndex];
+    const currentWord = words[currentIndex];
     const correctAnswer = currentWord.translation;
 
     // Diğer kelimeleri al ve karıştır
-    const otherWords = wordList.filter((_, index) => index !== currentIndex);
+    const otherWords = words.filter((_, index) => index !== currentIndex);
     const shuffledOtherWords = [...otherWords].sort(() => Math.random() - 0.5);
 
     // Benzersiz yanlış cevapları topla (doğru cevaptan farklı olmalı)
@@ -117,14 +117,25 @@ const QuizModeScreen = () => {
     // Eğer yeterli benzersiz yanlış cevap bulunamadıysa, rastgele çeviriler oluştur
     while (wrongAnswers.length < 3) {
       const randomTranslation = `Yanlış Cevap ${wrongAnswers.length + 1}`;
-      wrongAnswers.push(randomTranslation);
+      if (!wrongAnswers.includes(randomTranslation) && randomTranslation !== correctAnswer) {
+        wrongAnswers.push(randomTranslation);
+      }
     }
 
     // Tüm seçenekleri oluştur (doğru cevap + yanlış cevaplar)
     const allOptions = [...wrongAnswers, correctAnswer];
 
     // Seçenekleri karıştır
-    setOptions(allOptions.sort(() => Math.random() - 0.5));
+    const shuffledOptions = allOptions.sort(() => Math.random() - 0.5);
+    
+    // Doğru cevabın şıklarda olduğundan emin ol
+    if (!shuffledOptions.includes(correctAnswer)) {
+      // Eğer doğru cevap yoksa, rastgele bir şıkkı doğru cevapla değiştir
+      const randomIndex = Math.floor(Math.random() * shuffledOptions.length);
+      shuffledOptions[randomIndex] = correctAnswer;
+    }
+
+    setOptions(shuffledOptions);
   };
 
   const handleAnswer = () => {
@@ -140,7 +151,7 @@ const QuizModeScreen = () => {
       setCurrentIndex(currentIndex + 1);
       setSelectedAnswer(null);
       setShowResult(false);
-      generateOptions(words);
+      generateOptions();
       resetTimer();
     } else {
       navigation.navigate('QuizResults', {
@@ -150,6 +161,12 @@ const QuizModeScreen = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (words.length > 0) {
+      generateOptions();
+    }
+  }, [currentIndex, words]);
 
   const currentWord = words[currentIndex];
 
@@ -194,6 +211,8 @@ const QuizModeScreen = () => {
                     status={selectedAnswer === option ? 'checked' : 'unchecked'}
                     onPress={() => setSelectedAnswer(option)}
                     disabled={showResult}
+                    style={styles.radioButton}
+                    labelStyle={styles.radioButtonLabel}
                   />
                 ))}
               </View>
@@ -281,6 +300,14 @@ const styles = StyleSheet.create({
   timerText: {
     marginTop: 4,
     textAlign: 'center',
+  },
+  radioButton: {
+    marginVertical: 4,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  radioButtonLabel: {
+    fontSize: 16,
   },
 });
 
