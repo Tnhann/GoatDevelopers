@@ -182,7 +182,32 @@ const HomeScreen = () => {
               </Text>
               <Button
                 mode="contained"
-                onPress={() => navigation.navigate('MainTabs', { screen: 'WordLists' })}
+                onPress={() => {
+                  if (totalLists > 0) {
+                    // Kullanıcının ilk listesini bul ve quiz modunu başlat
+                    const fetchFirstList = async () => {
+                      try {
+                        const userId = auth.currentUser?.uid;
+                        if (userId) {
+                          const listsRef = collection(firestore, 'users', userId, 'wordLists');
+                          const listsSnapshot = await getDocs(listsRef);
+
+                          if (listsSnapshot.size > 0) {
+                            const firstListId = listsSnapshot.docs[0].id;
+                            navigation.navigate('QuizMode', { listId: firstListId });
+                          }
+                        }
+                      } catch (error) {
+                        console.error('Liste bilgisi alınırken hata oluştu:', error);
+                      }
+                    };
+
+                    fetchFirstList();
+                  } else {
+                    // Kullanıcının listesi yoksa, liste oluşturma sayfasına yönlendir
+                    navigation.navigate('MainTabs', { screen: 'WordLists' });
+                  }
+                }}
                 style={styles.cardButton}
               >
                 Quiz Başlat
@@ -199,7 +224,7 @@ const HomeScreen = () => {
               </Text>
               <Button
                 mode="contained"
-                onPress={() => navigation.navigate('MainTabs', { screen: 'Statistics' })}
+                onPress={() => navigation.navigate('Statistics')}
                 style={styles.cardButton}
               >
                 İstatistikleri Gör
