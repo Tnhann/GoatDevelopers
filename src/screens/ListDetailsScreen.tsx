@@ -91,6 +91,32 @@ const ListDetailsScreen = () => {
     }
   };
 
+  // Kelime sayısını güncelleme fonksiyonu
+  const updateWordCount = async (count: number) => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      // Liste belgesini güncelle
+      const listRef = doc(firestore, 'users', userId, 'wordLists', listId);
+      await updateDoc(listRef, {
+        wordCount: count
+      });
+
+      // Yerel state'i güncelle
+      if (wordList) {
+        setWordList({
+          ...wordList,
+          wordCount: count
+        });
+      }
+
+      console.log(`Kelime sayısı güncellendi: ${count}`);
+    } catch (error) {
+      console.error('Error updating word count:', error);
+    }
+  };
+
   const fetchWords = async () => {
     try {
       const userId = auth.currentUser?.uid;
@@ -110,6 +136,9 @@ const ListDetailsScreen = () => {
       }) as Word[];
 
       setWords(wordsList);
+
+      // Kelime sayısını güncelle
+      await updateWordCount(wordsList.length);
     } catch (error) {
       console.error('Error fetching words:', error);
       setError('Kelimeler yüklenirken bir hata oluştu');
@@ -151,6 +180,7 @@ const ListDetailsScreen = () => {
       }
 
       const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
+      // Yeni kelimeyi ekle
       await addDoc(wordsRef, {
         word: newWord.word.trim(),
         turkishMeaning: newWord.translation.trim(),
@@ -158,9 +188,17 @@ const ListDetailsScreen = () => {
         createdAt: new Date()
       });
 
+      // Formu sıfırla ve modalı kapat
       setNewWord({ word: '', translation: '', example: '' });
       setModalVisible(false);
-      fetchWords();
+
+      // Kelimeleri yeniden yükle
+      await fetchWords();
+
+      // Kelime sayısını doğrudan güncelle
+      if (words.length > 0) {
+        await updateWordCount(words.length);
+      }
     } catch (error) {
       console.error('Error adding word:', error);
       setError('Kelime eklenirken bir hata oluştu.');
@@ -184,8 +222,14 @@ const ListDetailsScreen = () => {
         return;
       }
 
+      // Kelimeyi sil
       await deleteDoc(doc(firestore, 'users', userId, 'wordLists', listId, 'words', wordId));
-      fetchWords();
+
+      // Kelimeleri yeniden yükle
+      await fetchWords();
+
+      // Kelime sayısını doğrudan güncelle
+      await updateWordCount(words.length);
     } catch (error) {
       console.error('Error deleting word:', error);
       setError('Kelime silinirken bir hata oluştu');
@@ -237,7 +281,10 @@ const ListDetailsScreen = () => {
       setEditModalVisible(false);
 
       // Kelimeleri yeniden yükle
-      fetchWords();
+      await fetchWords();
+
+      // Kelime sayısını doğrudan güncelle
+      await updateWordCount(words.length);
     } catch (error) {
       console.error('Error editing word:', error);
       setError('Kelime düzenlenirken bir hata oluştu.');
