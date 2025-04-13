@@ -2,28 +2,46 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Text, TextInput, Button, useTheme, ActivityIndicator, Snackbar } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { collection, addDoc } from 'firebase/firestore';
+import { db, auth } from '../config/firebase';
+import { updateUserStats } from '../services/statsService';
 
 const CreateListScreen = () => {
   const theme = useTheme();
+  const navigation = useNavigation();
   const [listName, setListName] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
 
-  const handleCreateList = () => {
+  const handleCreateList = async () => {
     if (!listName.trim()) {
       setError('List name is required');
       setSnackbarVisible(true);
       return;
     }
 
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      // Navigate back or show success message
-    }, 1000);
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const listsRef = collection(db, 'wordLists');
+      await addDoc(listsRef, {
+        name: listName.trim(),
+        userId,
+        createdAt: new Date(),
+        words: [],
+      });
+
+      // İstatistikleri güncelle
+      await updateUserStats('list');
+
+      navigation.goBack();
+    } catch (error) {
+      console.error('Liste oluşturulurken hata oluştu:', error);
+    }
   };
 
   if (loading) {

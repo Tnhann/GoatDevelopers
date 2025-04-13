@@ -1,54 +1,71 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, useTheme, Card, Icon } from 'react-native-paper';
-import { useAuth } from '../hooks/useAuth';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { Text, useTheme, Card, Icon, ActivityIndicator } from 'react-native-paper';
+import { getUserStats } from '../services/statsService';
+import { auth } from '../config/firebase';
+
+const { width } = Dimensions.get('window');
+const CARD_WIDTH = width * 0.4;
 
 const StatisticsScreen = () => {
   const theme = useTheme();
-  const { user } = useAuth();
-  const [stats, setStats] = React.useState({
-    totalWords: 0,
-    masteredWords: 0,
-    learningWords: 0,
+  const [stats, setStats] = useState({
+    completedWordModes: 0,
+    completedQuizzes: 0,
     listsCreated: 0,
     dailyStreak: 0,
+    totalWordsLearned: 0,
+    totalQuizzesTaken: 0,
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchStats = async () => {
-      if (!user) return;
-
       try {
-        // Kelime listelerini getir
-        const listsQuery = query(
-          collection(db, 'wordLists'),
-          where('userId', '==', user.uid)
-        );
-        const listsSnapshot = await getDocs(listsQuery);
-        const lists = listsSnapshot.docs.map(doc => doc.data());
+        if (!auth.currentUser) {
+          setError('Kullanıcı girişi yapılmamış');
+          setLoading(false);
+          return;
+        }
 
-        // İstatistikleri hesapla
-        const totalWords = lists.reduce((acc, list) => acc + (list.words?.length || 0), 0);
-        const masteredWords = lists.reduce((acc, list) => 
-          acc + (list.words?.filter((word: any) => word.mastered)?.length || 0), 0
-        );
-
+        const userStats = await getUserStats();
         setStats({
-          totalWords,
-          masteredWords,
-          learningWords: totalWords - masteredWords,
-          listsCreated: lists.length,
-          dailyStreak: 0, // Bu değer kullanıcının günlük aktivitesine göre hesaplanacak
+          completedWordModes: userStats.completedWordModes || 0,
+          completedQuizzes: userStats.completedQuizzes || 0,
+          listsCreated: userStats.listsCreated || 0,
+          dailyStreak: userStats.dailyStreak || 0,
+          totalWordsLearned: userStats.totalWordsLearned || 0,
+          totalQuizzesTaken: userStats.totalQuizzesTaken || 0,
         });
+        setLoading(false);
       } catch (error) {
         console.error('İstatistikler yüklenirken hata oluştu:', error);
+        setError('İstatistikler yüklenirken hata oluştu');
+        setLoading(false);
       }
     };
 
     fetchStats();
-  }, [user]);
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centerContent]}>
+        <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
+          {error}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -58,50 +75,50 @@ const StatisticsScreen = () => {
         </Text>
 
         <View style={styles.statsGrid}>
-          <Card style={styles.statCard}>
-            <Card.Content>
-              <Icon source="book" size={40} color={theme.colors.primary} />
+          <Card style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <Card.Content style={styles.cardContent}>
+              <Icon source="book" size={24} color={theme.colors.primary} />
               <Text variant="headlineLarge" style={[styles.statNumber, { color: theme.colors.primary }]}>
-                {stats.totalWords}
+                {stats.totalWordsLearned}
               </Text>
-              <Text variant="bodyMedium" style={styles.statLabel}>
+              <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
                 Toplam Kelime
               </Text>
             </Card.Content>
           </Card>
 
-          <Card style={styles.statCard}>
-            <Card.Content>
-              <Icon source="check-circle" size={40} color={theme.colors.primary} />
-              <Text variant="headlineLarge" style={[styles.statNumber, { color: theme.colors.primary }]}>
-                {stats.masteredWords}
-              </Text>
-              <Text variant="bodyMedium" style={styles.statLabel}>
-                Öğrenilen Kelime
-              </Text>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.statCard}>
-            <Card.Content>
-              <Icon source="book-open-page-variant" size={40} color={theme.colors.primary} />
-              <Text variant="headlineLarge" style={[styles.statNumber, { color: theme.colors.primary }]}>
-                {stats.learningWords}
-              </Text>
-              <Text variant="bodyMedium" style={styles.statLabel}>
-                Öğrenilen Kelime
-              </Text>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.statCard}>
-            <Card.Content>
-              <Icon source="format-list-bulleted" size={40} color={theme.colors.primary} />
+          <Card style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <Card.Content style={styles.cardContent}>
+              <Icon source="format-list-bulleted" size={24} color={theme.colors.primary} />
               <Text variant="headlineLarge" style={[styles.statNumber, { color: theme.colors.primary }]}>
                 {stats.listsCreated}
               </Text>
-              <Text variant="bodyMedium" style={styles.statLabel}>
+              <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
                 Oluşturulan Liste
+              </Text>
+            </Card.Content>
+          </Card>
+
+          <Card style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <Card.Content style={styles.cardContent}>
+              <Icon source="book-check" size={24} color={theme.colors.primary} />
+              <Text variant="headlineLarge" style={[styles.statNumber, { color: theme.colors.primary }]}>
+                {stats.completedWordModes}
+              </Text>
+              <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                Tamamlanan Kelime Modu
+              </Text>
+            </Card.Content>
+          </Card>
+
+          <Card style={[styles.statCard, { width: CARD_WIDTH }]}>
+            <Card.Content style={styles.cardContent}>
+              <Icon source="help-circle" size={24} color={theme.colors.primary} />
+              <Text variant="headlineLarge" style={[styles.statNumber, { color: theme.colors.primary }]}>
+                {stats.completedQuizzes}
+              </Text>
+              <Text variant="bodyMedium" style={[styles.statLabel, { color: theme.colors.onSurfaceVariant }]}>
+                Başarılı Quiz
               </Text>
             </Card.Content>
           </Card>
@@ -110,7 +127,7 @@ const StatisticsScreen = () => {
         <Card style={styles.streakCard}>
           <Card.Content>
             <View style={styles.streakHeader}>
-              <Icon source="fire" size={40} color={theme.colors.error} />
+              <Icon source="fire" size={32} color={theme.colors.error} />
               <Text variant="headlineMedium" style={[styles.streakTitle, { color: theme.colors.error }]}>
                 Günlük Seri
               </Text>
@@ -135,31 +152,51 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
   },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   title: {
     marginBottom: 24,
-    fontWeight: 'bold',
+    textAlign: 'center',
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 16,
     marginBottom: 24,
+    justifyContent: 'space-between',
   },
   statCard: {
-    flex: 1,
-    minWidth: '45%',
     marginBottom: 16,
+    alignItems: 'center',
+    width: CARD_WIDTH,
+    elevation: 2,
+    borderRadius: 12,
+  },
+  cardContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    width: '100%',
   },
   statNumber: {
     marginTop: 8,
     marginBottom: 4,
     fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 22,
   },
   statLabel: {
     textAlign: 'center',
+    fontSize: 12,
+    width: '100%',
+    lineHeight: 16,
   },
   streakCard: {
     marginBottom: 16,
+    borderRadius: 12,
+    elevation: 2,
   },
   streakHeader: {
     flexDirection: 'row',
