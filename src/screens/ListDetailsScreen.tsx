@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs, addDoc, query, where, doc, deleteDoc, getDoc } from 'firebase/firestore';
-import { db, auth } from '../config/firebase';
+import { firestore, auth } from '../config/firebase';
 
 type ListDetailsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'ListDetails'>;
 
@@ -23,6 +23,7 @@ interface WordList {
   wordCount: number;
   language: string;
   userId: string;
+  isDefault?: boolean;
 }
 
 const ListDetailsScreen = () => {
@@ -30,7 +31,7 @@ const ListDetailsScreen = () => {
   const navigation = useNavigation<ListDetailsScreenNavigationProp>();
   const route = useRoute();
   const { listId } = route.params as { listId: string };
-  
+
   const [wordList, setWordList] = useState<WordList | null>(null);
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +58,7 @@ const ListDetailsScreen = () => {
         return;
       }
 
-      const listRef = doc(db, 'wordLists', listId);
+      const listRef = doc(firestore, 'users', userId, 'wordLists', listId);
       const listDoc = await getDoc(listRef);
 
       if (!listDoc.exists()) {
@@ -67,14 +68,22 @@ const ListDetailsScreen = () => {
       }
 
       const listData = listDoc.data();
-      setIsOwner(listData.userId === userId);
-      
-      if (listData.userId === userId) {
-        fetchWords();
-      } else {
-        setError('Bu listeye erişim yetkiniz yok.');
-        setSnackbarVisible(true);
-      }
+      // Kullanıcının kendi listesi olduğu için her zaman erişim var
+      setIsOwner(!listData.isDefault); // Varsayılan listeleri düzenleyemez
+
+      // Listeyi getir
+      fetchWords();
+
+      // Liste bilgilerini ayarla
+      setWordList({
+        id: listId,
+        title: listData.name,
+        description: listData.description,
+        wordCount: listData.wordCount || 0,
+        language: listData.language || 'english',
+        userId: userId,
+        isDefault: listData.isDefault || false
+      });
     } catch (error) {
       console.error('Error checking list ownership:', error);
       setError('Liste bilgileri alınırken bir hata oluştu.');
@@ -84,13 +93,23 @@ const ListDetailsScreen = () => {
 
   const fetchWords = async () => {
     try {
-      const wordsRef = collection(db, 'wordLists', listId, 'words');
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
       const querySnapshot = await getDocs(wordsRef);
-      const wordList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Word[];
-      setWords(wordList);
+
+      const wordsList = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          word: data.word,
+          translation: data.turkishMeaning || data.translation,
+          example: data.example || ''
+        };
+      }) as Word[];
+
+      setWords(wordsList);
     } catch (error) {
       console.error('Error fetching words:', error);
       setError('Kelimeler yüklenirken bir hata oluştu');
@@ -115,7 +134,14 @@ const ListDetailsScreen = () => {
         return;
       }
 
-      const listRef = doc(db, 'wordLists', listId);
+      // Varsayılan listeye kelime eklenemez
+      if (wordList?.isDefault) {
+        setError('Varsayılan listelere kelime eklenemez.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      const listRef = doc(firestore, 'users', userId, 'wordLists', listId);
       const listDoc = await getDoc(listRef);
 
       if (!listDoc.exists()) {
@@ -124,16 +150,11 @@ const ListDetailsScreen = () => {
         return;
       }
 
-      const listData = listDoc.data();
-      if (listData.userId !== userId) {
-        setError('Bu listeye kelime ekleme yetkiniz yok.');
-        setSnackbarVisible(true);
-        return;
-      }
-
-      const wordsRef = collection(db, 'wordLists', listId, 'words');
+      const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
       await addDoc(wordsRef, {
-        ...newWord,
+        word: newWord.word.trim(),
+        turkishMeaning: newWord.translation.trim(),
+        example: newWord.example.trim(),
         createdAt: new Date()
       });
 
@@ -156,7 +177,14 @@ const ListDetailsScreen = () => {
         return;
       }
 
-      await deleteDoc(doc(db, 'wordLists', listId, 'words', wordId));
+      // Varsayılan listeden kelime silinemez
+      if (wordList?.isDefault) {
+        setError('Varsayılan listelerden kelime silinemez.');
+        setSnackbarVisible(true);
+        return;
+      }
+
+      await deleteDoc(doc(firestore, 'users', userId, 'wordLists', listId, 'words', wordId));
       fetchWords();
     } catch (error) {
       console.error('Error deleting word:', error);
@@ -362,4 +390,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ListDetailsScreen; 
+export default ListDetailsScreen;

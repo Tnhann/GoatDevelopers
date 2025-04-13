@@ -5,7 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs, addDoc, query, where, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
-import { db, auth } from '../config/firebase';
+import { firestore, auth } from '../config/firebase';
+import { ensureDefaultWordLists, getUserWordLists } from '../services/defaultWordListService';
 
 type WordListsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
 
@@ -37,75 +38,44 @@ const WordListsScreen = () => {
   const [editingList, setEditingList] = useState<WordList | null>(null);
 
   useEffect(() => {
-    checkAndCreateSampleList();
+    loadWordLists();
   }, []);
 
-  const checkAndCreateSampleList = async () => {
+  const loadWordLists = async () => {
     try {
+      setLoading(true);
       const userId = auth.currentUser?.uid;
       if (!userId) {
         setError('Kullanıcı girişi yapılmamış');
         setSnackbarVisible(true);
+        setLoading(false);
         return;
       }
 
-      // Kullanıcının listelerini kontrol et
-      const q = query(collection(db, 'wordLists'), where('userId', '==', userId));
+      // Varsayılan kelime listelerini kontrol et ve ekle
+      await ensureDefaultWordLists();
+
+      // Kullanıcının tüm listelerini getir
+      const q = query(collection(firestore, 'users', userId, 'wordLists'));
       const querySnapshot = await getDocs(q);
-      
-      // Eğer kullanıcının hiç listesi yoksa örnek liste oluştur
-      if (querySnapshot.empty) {
-        // Benzersiz bir liste ID'si oluştur
-        const listId = `list_${userId}_${Date.now()}`;
-        
-        const sampleList = {
-          title: 'İngilizce Kelimeler',
-          description: 'Günlük kullanılan İngilizce kelimeler',
-          language: 'english',
+
+      const lists = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data.name,
+          description: data.description,
+          wordCount: data.wordCount || 0,
+          language: data.language || 'english',
           userId: userId,
-          wordCount: 3,
-          createdAt: new Date()
+          createdAt: data.createdAt?.toDate() || new Date(),
+          isDefault: data.isDefault || false
         };
+      }) as WordList[];
 
-        const listRef = doc(db, 'wordLists', listId);
-        await setDoc(listRef, sampleList);
-
-        const wordsRef = collection(db, 'wordLists', listId, 'words');
-        
-        const sampleWords = [
-          {
-            word: 'Hello',
-            translation: 'Merhaba',
-            example: 'Hello, how are you?',
-            createdAt: new Date()
-          },
-          {
-            word: 'Goodbye',
-            translation: 'Hoşçakal',
-            example: 'Goodbye, see you tomorrow!',
-            createdAt: new Date()
-          },
-          {
-            word: 'Thank you',
-            translation: 'Teşekkür ederim',
-            example: 'Thank you for your help.',
-            createdAt: new Date()
-          }
-        ];
-
-        for (const word of sampleWords) {
-          await addDoc(wordsRef, word);
-        }
-      }
-
-      // Listeleri getir
-      const lists = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as WordList[];
       setWordLists(lists);
     } catch (error) {
-      console.error('Error checking/creating sample list:', error);
+      console.error('Error loading word lists:', error);
       setError('Listeler yüklenirken bir hata oluştu');
       setSnackbarVisible(true);
     } finally {
@@ -130,20 +100,20 @@ const WordListsScreen = () => {
 
       // Benzersiz bir liste ID'si oluştur
       const listId = `list_${userId}_${Date.now()}`;
-      
-      const listRef = doc(db, 'wordLists', listId);
+
+      const listRef = doc(firestore, 'users', userId, 'wordLists', listId);
       await setDoc(listRef, {
-        title: newList.title.trim(),
+        name: newList.title.trim(),
         description: newList.description.trim() || '',
         language: newList.language,
-        userId,
         wordCount: 0,
-        createdAt: new Date()
+        createdAt: new Date(),
+        isDefault: false
       });
 
       setNewList({ title: '', description: '', language: 'english' });
       setModalVisible(false);
-      checkAndCreateSampleList();
+      loadWordLists();
     } catch (error) {
       console.error('Error creating word list:', error);
       setError('Liste oluşturulurken bir hata oluştu');
@@ -161,9 +131,9 @@ const WordListsScreen = () => {
       }
 
       // Önce listeyi kontrol et
-      const listRef = doc(db, 'wordLists', listId);
+      const listRef = doc(firestore, 'users', userId, 'wordLists', listId);
       const listDoc = await getDoc(listRef);
-      
+
       if (!listDoc.exists()) {
         setError('Liste bulunamadı');
         setSnackbarVisible(true);
@@ -171,14 +141,14 @@ const WordListsScreen = () => {
       }
 
       const listData = listDoc.data();
-      if (listData.userId !== userId) {
-        setError('Bu listeyi silme yetkiniz yok');
+      if (listData.isDefault) {
+        setError('Varsayılan listeler silinemez');
         setSnackbarVisible(true);
         return;
       }
 
       // Önce alt koleksiyonları sil
-      const wordsRef = collection(db, 'wordLists', listId, 'words');
+      const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
       const wordsSnapshot = await getDocs(wordsRef);
       const deletePromises = wordsSnapshot.docs.map(doc => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
@@ -211,10 +181,9 @@ const WordListsScreen = () => {
         return;
       }
 
-      const listRef = doc(db, 'wordLists', editingList.id);
+      const listRef = doc(firestore, 'users', userId, 'wordLists', editingList.id);
       await setDoc(listRef, {
-        ...editingList,
-        title: newList.title,
+        name: newList.title,
         description: newList.description,
         language: newList.language
       }, { merge: true });
@@ -222,7 +191,7 @@ const WordListsScreen = () => {
       setNewList({ title: '', description: '', language: 'english' });
       setEditingList(null);
       setEditModalVisible(false);
-      checkAndCreateSampleList();
+      loadWordLists();
     } catch (error) {
       console.error('Error editing word list:', error);
       setError('Liste düzenlenirken bir hata oluştu');
@@ -231,29 +200,31 @@ const WordListsScreen = () => {
   };
 
   const renderWordList = ({ item }: { item: WordList }) => (
-    <Card style={styles.card}>
+    <Card style={[styles.card, item.isDefault && styles.defaultCard]}>
       <Card.Content>
         <View style={styles.cardHeader}>
           <Text variant="titleMedium" style={styles.cardTitle}>{item.title}</Text>
-          <Menu
-            visible={menuVisible === item.id}
-            onDismiss={() => setMenuVisible(null)}
-            anchor={
-              <IconButton
-                icon="dots-vertical"
-                onPress={() => setMenuVisible(item.id)}
+          {!item.isDefault && (
+            <Menu
+              visible={menuVisible === item.id}
+              onDismiss={() => setMenuVisible(null)}
+              anchor={
+                <IconButton
+                  icon="dots-vertical"
+                  onPress={() => setMenuVisible(item.id)}
+                />
+              }
+            >
+              <Menu.Item
+                onPress={() => {
+                  setMenuVisible(null);
+                  handleDeleteList(item.id);
+                }}
+                title="Sil"
+                leadingIcon="delete"
               />
-            }
-          >
-            <Menu.Item
-              onPress={() => {
-                setMenuVisible(null);
-                handleDeleteList(item.id);
-              }}
-              title="Sil"
-              leadingIcon="delete"
-            />
-          </Menu>
+            </Menu>
+          )}
         </View>
         <Text variant="bodyMedium" style={styles.cardDescription}>
           {item.description}
@@ -261,6 +232,11 @@ const WordListsScreen = () => {
         <Text variant="bodySmall" style={styles.cardInfo}>
           {item.wordCount} kelime
         </Text>
+        {item.isDefault && (
+          <Text variant="bodySmall" style={styles.defaultBadge}>
+            Varsayılan Liste
+          </Text>
+        )}
       </Card.Content>
       <Card.Actions>
         <Button
@@ -353,6 +329,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     elevation: 2,
   },
+  defaultCard: {
+    borderLeftWidth: 4,
+    borderLeftColor: '#6200ee',
+  },
+  defaultBadge: {
+    marginTop: 8,
+    color: '#6200ee',
+    fontWeight: 'bold',
+  },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -396,4 +381,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WordListsScreen; 
+export default WordListsScreen;

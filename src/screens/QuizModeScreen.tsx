@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { firestore, auth } from '../config/firebase';
 
 type QuizModeScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'QuizMode'>;
 
@@ -13,6 +13,7 @@ interface Word {
   id: string;
   word: string;
   translation: string;
+  turkishMeaning?: string;
   example: string;
 }
 
@@ -57,15 +58,26 @@ const QuizModeScreen = () => {
 
   const fetchWords = async () => {
     try {
-      const wordsRef = collection(db, 'wordLists', listId, 'words');
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
       const querySnapshot = await getDocs(wordsRef);
-      const wordList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Word[];
-      setWords(wordList);
-      generateOptions(wordList);
-      resetTimer();
+      const wordList = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          word: data.word,
+          translation: data.turkishMeaning || data.translation || '',
+          example: data.example || ''
+        };
+      }) as Word[];
+
+      if (wordList.length > 0) {
+        setWords(wordList);
+        generateOptions(wordList);
+        resetTimer();
+      }
     } catch (error) {
       console.error('Error fetching words:', error);
     }
@@ -78,14 +90,14 @@ const QuizModeScreen = () => {
 
   const generateOptions = (wordList: Word[]) => {
     if (wordList.length < 4) return;
-    
+
     const currentWord = wordList[currentIndex];
     const otherWords = wordList.filter((_, index) => index !== currentIndex);
     const randomWords = otherWords
       .sort(() => Math.random() - 0.5)
       .slice(0, 3)
       .map(word => word.translation);
-    
+
     const allOptions = [...randomWords, currentWord.translation];
     setOptions(allOptions.sort(() => Math.random() - 0.5));
   };
@@ -106,10 +118,10 @@ const QuizModeScreen = () => {
       generateOptions(words);
       resetTimer();
     } else {
-      navigation.navigate('QuizResults', { 
-        score, 
+      navigation.navigate('QuizResults', {
+        score,
         totalQuestions: words.length,
-        listId 
+        listId
       });
     }
   };
@@ -247,4 +259,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuizModeScreen; 
+export default QuizModeScreen;

@@ -3,12 +3,13 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Button, useTheme, Appbar, Card } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { firestore, auth } from '../config/firebase';
 
 interface Word {
   id: string;
   word: string;
   translation: string;
+  turkishMeaning?: string;
   example: string;
 }
 
@@ -28,13 +29,24 @@ const LearningModeScreen = () => {
 
   const fetchWords = async () => {
     try {
-      const wordsRef = collection(db, 'wordLists', listId, 'words');
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
       const querySnapshot = await getDocs(wordsRef);
-      const wordList = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Word[];
-      setWords(wordList);
+      const wordList = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          word: data.word,
+          translation: data.turkishMeaning || data.translation || '',
+          example: data.example || ''
+        };
+      }) as Word[];
+
+      if (wordList.length > 0) {
+        setWords(wordList);
+      }
     } catch (error) {
       console.error('Error fetching words:', error);
     }
@@ -164,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LearningModeScreen; 
+export default LearningModeScreen;
