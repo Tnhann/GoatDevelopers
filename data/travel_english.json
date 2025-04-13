@@ -1,0 +1,246 @@
+{
+  "name": "Seyahat İçin İngilizce Kelimeler",
+  "description": "Seyahat ederken kullanışlı olabilecek İngilizce kelimeler",
+  "words": [
+    {
+      "id": "word1",
+      "word": "airport",
+      "meaning": "A place where aircraft take off and land",
+      "turkishMeaning": "havalimanı",
+      "example": "We need to be at the airport two hours before the flight.",
+      "level": "beginner"
+    },
+    {
+      "id": "word2",
+      "word": "passport",
+      "meaning": "An official document that identifies you as a citizen of a country",
+      "turkishMeaning": "pasaport",
+      "example": "Don't forget to bring your passport.",
+      "level": "beginner"
+    },
+    {
+      "id": "word3",
+      "word": "hotel",
+      "meaning": "A place that provides accommodation and meals",
+      "turkishMeaning": "otel",
+      "example": "We're staying at a hotel near the beach.",
+      "level": "beginner"
+    },
+    {
+      "id": "word4",
+      "word": "ticket",
+      "meaning": "A piece of paper that shows you have paid to enter or travel",
+      "turkishMeaning": "bilet",
+      "example": "I've already bought the train tickets.",
+      "level": "beginner"
+    },
+    {
+      "id": "word5",
+      "word": "reservation",
+      "meaning": "An arrangement to have something kept for you",
+      "turkishMeaning": "rezervasyon",
+      "example": "Do you have a reservation for dinner?",
+      "level": "intermediate"
+    },
+    {
+      "id": "word6",
+      "word": "luggage",
+      "meaning": "The bags and suitcases that you take with you when you travel",
+      "turkishMeaning": "bagaj",
+      "example": "My luggage was lost during the flight.",
+      "level": "beginner"
+    },
+    {
+      "id": "word7",
+      "word": "destination",
+      "meaning": "The place to which someone or something is going",
+      "turkishMeaning": "varış noktası",
+      "example": "Paris is our final destination.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word8",
+      "word": "departure",
+      "meaning": "The act of leaving a place",
+      "turkishMeaning": "kalkış",
+      "example": "The departure time is 9:30 AM.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word9",
+      "word": "arrival",
+      "meaning": "The act of reaching a place",
+      "turkishMeaning": "varış",
+      "example": "Our arrival in London was delayed by two hours.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word10",
+      "word": "currency",
+      "meaning": "The money used in a particular country",
+      "turkishMeaning": "para birimi",
+      "example": "You need to exchange your currency before traveling.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word11",
+      "word": "map",
+      "meaning": "A diagrammatic representation of an area",
+      "turkishMeaning": "harita",
+      "example": "We used a map to find our way around the city.",
+      "level": "beginner"
+    },
+    {
+      "id": "word12",
+      "word": "guide",
+      "meaning": "A person who shows the way to others",
+      "turkishMeaning": "rehber",
+      "example": "The tour guide explained the history of the monument.",
+      "level": "beginner"
+    },
+    {
+      "id": "word13",
+      "word": "tourist",
+      "meaning": "A person who is traveling or visiting a place for pleasure",
+      "turkishMeaning": "turist",
+      "example": "The city is full of tourists in summer.",
+      "level": "beginner"
+    },
+    {
+      "id": "word14",
+      "word": "vacation",
+      "meaning": "A period of time devoted to pleasure, rest, or relaxation",
+      "turkishMeaning": "tatil",
+      "example": "We're going on vacation next week.",
+      "level": "beginner"
+    },
+    {
+      "id": "word15",
+      "word": "journey",
+      "meaning": "An act of traveling from one place to another",
+      "turkishMeaning": "yolculuk",
+      "example": "The journey from London to Paris takes about 2 hours by train.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word16",
+      "word": "flight",
+      "meaning": "A journey made by flying, usually in an airplane",
+      "turkishMeaning": "uçuş",
+      "example": "Our flight was delayed due to bad weather.",
+      "level": "beginner"
+    },
+    {
+      "id": "word17",
+      "word": "train",
+      "meaning": "A form of transport that runs on rails",
+      "turkishMeaning": "tren",
+      "example": "We took the train from Paris to Lyon.",
+      "level": "beginner"
+    },
+    {
+      "id": "word18",
+      "word": "bus",
+      "meaning": "A large motor vehicle carrying passengers by road",
+      "turkishMeaning": "otobüs",
+      "example": "The bus to the city center leaves every 15 minutes.",
+      "level": "beginner"
+    },
+    {
+      "id": "word19",
+      "word": "taxi",
+      "meaning": "A car with a driver that you pay to take you somewhere",
+      "turkishMeaning": "taksi",
+      "example": "We took a taxi from the airport to the hotel.",
+      "level": "beginner"
+    },
+    {
+      "id": "word20",
+      "word": "rent",
+      "meaning": "To pay to use something for a period of time",
+      "turkishMeaning": "kiralamak",
+      "example": "We decided to rent a car for our trip.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word21",
+      "word": "beach",
+      "meaning": "An area of sand or small stones near the sea or another body of water",
+      "turkishMeaning": "plaj",
+      "example": "We spent the day at the beach.",
+      "level": "beginner"
+    },
+    {
+      "id": "word22",
+      "word": "mountain",
+      "meaning": "A large natural elevation of the earth's surface",
+      "turkishMeaning": "dağ",
+      "example": "We went hiking in the mountains.",
+      "level": "beginner"
+    },
+    {
+      "id": "word23",
+      "word": "museum",
+      "meaning": "A building where objects of historical, scientific, or artistic interest are kept",
+      "turkishMeaning": "müze",
+      "example": "We visited the museum to see the famous painting.",
+      "level": "beginner"
+    },
+    {
+      "id": "word24",
+      "word": "restaurant",
+      "meaning": "A place where people pay to sit and eat meals",
+      "turkishMeaning": "restoran",
+      "example": "We had dinner at an Italian restaurant.",
+      "level": "beginner"
+    },
+    {
+      "id": "word25",
+      "word": "souvenir",
+      "meaning": "A thing that is kept as a reminder of a person, place, or event",
+      "turkishMeaning": "hediyelik eşya",
+      "example": "I bought a souvenir for my friend.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word26",
+      "word": "photograph",
+      "meaning": "A picture made using a camera",
+      "turkishMeaning": "fotoğraf",
+      "example": "I took many photographs during my trip.",
+      "level": "beginner"
+    },
+    {
+      "id": "word27",
+      "word": "passport control",
+      "meaning": "The place at an airport or border where officials check passports",
+      "turkishMeaning": "pasaport kontrolü",
+      "example": "We had to wait in line at passport control.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word28",
+      "word": "customs",
+      "meaning": "The place at a port, airport, or border where officials check incoming goods",
+      "turkishMeaning": "gümrük",
+      "example": "We had to declare our items at customs.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word29",
+      "word": "visa",
+      "meaning": "An endorsement on a passport indicating that the holder is allowed to enter, leave, or stay for a specified period of time in a country",
+      "turkishMeaning": "vize",
+      "example": "You need a visa to visit that country.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word30",
+      "word": "sightseeing",
+      "meaning": "The activity of visiting places of interest in a particular location",
+      "turkishMeaning": "gezinti",
+      "example": "We spent the day sightseeing in Rome.",
+      "level": "intermediate"
+    }
+  ]
+}

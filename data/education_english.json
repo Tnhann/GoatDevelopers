@@ -1,0 +1,246 @@
+{
+  "name": "Eğitim İçin İngilizce Kelimeler",
+  "description": "Eğitim alanında sık kullanılan İngilizce kelimeler",
+  "words": [
+    {
+      "id": "word1",
+      "word": "school",
+      "meaning": "An institution for educating children",
+      "turkishMeaning": "okul",
+      "example": "My children go to a good school.",
+      "level": "beginner"
+    },
+    {
+      "id": "word2",
+      "word": "university",
+      "meaning": "A high-level educational institution in which students study for degrees and academic research is done",
+      "turkishMeaning": "üniversite",
+      "example": "She studies medicine at the university.",
+      "level": "beginner"
+    },
+    {
+      "id": "word3",
+      "word": "student",
+      "meaning": "A person who is studying at a school or university",
+      "turkishMeaning": "öğrenci",
+      "example": "He is a student at Oxford University.",
+      "level": "beginner"
+    },
+    {
+      "id": "word4",
+      "word": "teacher",
+      "meaning": "A person who teaches, especially in a school",
+      "turkishMeaning": "öğretmen",
+      "example": "My math teacher is very good at explaining difficult concepts.",
+      "level": "beginner"
+    },
+    {
+      "id": "word5",
+      "word": "professor",
+      "meaning": "A teacher of the highest rank in a university",
+      "turkishMeaning": "profesör",
+      "example": "She is a professor of economics.",
+      "level": "beginner"
+    },
+    {
+      "id": "word6",
+      "word": "lesson",
+      "meaning": "A period of learning or teaching",
+      "turkishMeaning": "ders",
+      "example": "We have five lessons every day.",
+      "level": "beginner"
+    },
+    {
+      "id": "word7",
+      "word": "lecture",
+      "meaning": "An educational talk to an audience, especially one of students in a university",
+      "turkishMeaning": "ders",
+      "example": "I attended a lecture on modern art yesterday.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word8",
+      "word": "course",
+      "meaning": "A series of lessons or lectures on a particular subject",
+      "turkishMeaning": "kurs",
+      "example": "I'm taking a course in Spanish.",
+      "level": "beginner"
+    },
+    {
+      "id": "word9",
+      "word": "degree",
+      "meaning": "An academic rank conferred by a university or college after examination or completion of a course of study",
+      "turkishMeaning": "derece",
+      "example": "She has a degree in psychology.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word10",
+      "word": "diploma",
+      "meaning": "A document bearing record of graduation from or of a degree conferred by an educational establishment",
+      "turkishMeaning": "diploma",
+      "example": "He received his diploma last week.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word11",
+      "word": "exam",
+      "meaning": "A formal test of a person's knowledge or proficiency in a subject or skill",
+      "turkishMeaning": "sınav",
+      "example": "I have an English exam tomorrow.",
+      "level": "beginner"
+    },
+    {
+      "id": "word12",
+      "word": "test",
+      "meaning": "A procedure intended to establish the quality, performance, or reliability of something",
+      "turkishMeaning": "test",
+      "example": "We had a math test yesterday.",
+      "level": "beginner"
+    },
+    {
+      "id": "word13",
+      "word": "grade",
+      "meaning": "A particular level of rank, quality, proficiency, or value",
+      "turkishMeaning": "not",
+      "example": "She got good grades in all her subjects.",
+      "level": "beginner"
+    },
+    {
+      "id": "word14",
+      "word": "homework",
+      "meaning": "Schoolwork that a student is required to do at home",
+      "turkishMeaning": "ev ödevi",
+      "example": "I have a lot of homework to do tonight.",
+      "level": "beginner"
+    },
+    {
+      "id": "word15",
+      "word": "assignment",
+      "meaning": "A task or piece of work assigned to someone as part of a job or course of study",
+      "turkishMeaning": "ödev",
+      "example": "The assignment is due next week.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word16",
+      "word": "study",
+      "meaning": "The devotion of time and attention to acquiring knowledge on an academic subject",
+      "turkishMeaning": "çalışmak",
+      "example": "I need to study for my exams.",
+      "level": "beginner"
+    },
+    {
+      "id": "word17",
+      "word": "learn",
+      "meaning": "Gain or acquire knowledge of or skill in (something) by study, experience, or being taught",
+      "turkishMeaning": "öğrenmek",
+      "example": "I want to learn Spanish.",
+      "level": "beginner"
+    },
+    {
+      "id": "word18",
+      "word": "teach",
+      "meaning": "Impart knowledge to or instruct (someone) as to how to do something",
+      "turkishMeaning": "öğretmek",
+      "example": "She teaches English to foreign students.",
+      "level": "beginner"
+    },
+    {
+      "id": "word19",
+      "word": "education",
+      "meaning": "The process of receiving or giving systematic instruction, especially at a school or university",
+      "turkishMeaning": "eğitim",
+      "example": "A good education is important for success in life.",
+      "level": "beginner"
+    },
+    {
+      "id": "word20",
+      "word": "knowledge",
+      "meaning": "Facts, information, and skills acquired through experience or education",
+      "turkishMeaning": "bilgi",
+      "example": "He has a lot of knowledge about history.",
+      "level": "beginner"
+    },
+    {
+      "id": "word21",
+      "word": "subject",
+      "meaning": "A branch of knowledge studied or taught in a school, college, or university",
+      "turkishMeaning": "konu",
+      "example": "Mathematics is my favorite subject.",
+      "level": "beginner"
+    },
+    {
+      "id": "word22",
+      "word": "classroom",
+      "meaning": "A room in which a class of students is taught",
+      "turkishMeaning": "sınıf",
+      "example": "There are 30 students in our classroom.",
+      "level": "beginner"
+    },
+    {
+      "id": "word23",
+      "word": "library",
+      "meaning": "A building or room containing collections of books, periodicals, and sometimes films and recorded music for use by the public or members of an institution",
+      "turkishMeaning": "kütüphane",
+      "example": "I go to the library to study.",
+      "level": "beginner"
+    },
+    {
+      "id": "word24",
+      "word": "book",
+      "meaning": "A written or printed work consisting of pages glued or sewn together along one side and bound in covers",
+      "turkishMeaning": "kitap",
+      "example": "I'm reading a book about ancient Rome.",
+      "level": "beginner"
+    },
+    {
+      "id": "word25",
+      "word": "notebook",
+      "meaning": "A book with blank or ruled pages for writing notes in",
+      "turkishMeaning": "defter",
+      "example": "I write all my notes in a notebook.",
+      "level": "beginner"
+    },
+    {
+      "id": "word26",
+      "word": "pen",
+      "meaning": "An instrument for writing or drawing with ink",
+      "turkishMeaning": "kalem",
+      "example": "Can I borrow your pen?",
+      "level": "beginner"
+    },
+    {
+      "id": "word27",
+      "word": "pencil",
+      "meaning": "An instrument for writing or drawing, consisting of a thin stick of graphite or a similar substance enclosed in a long thin piece of wood or fixed in a cylindrical case",
+      "turkishMeaning": "kurşun kalem",
+      "example": "I prefer to draw with a pencil.",
+      "level": "beginner"
+    },
+    {
+      "id": "word28",
+      "word": "research",
+      "meaning": "The systematic investigation into and study of materials and sources in order to establish facts and reach new conclusions",
+      "turkishMeaning": "araştırma",
+      "example": "She is doing research on climate change.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word29",
+      "word": "science",
+      "meaning": "The intellectual and practical activity encompassing the systematic study of the structure and behaviour of the physical and natural world through observation and experiment",
+      "turkishMeaning": "bilim",
+      "example": "He is interested in science.",
+      "level": "beginner"
+    },
+    {
+      "id": "word30",
+      "word": "mathematics",
+      "meaning": "The abstract science of number, quantity, and space",
+      "turkishMeaning": "matematik",
+      "example": "Mathematics is a difficult subject for many students.",
+      "level": "beginner"
+    }
+  ]
+}

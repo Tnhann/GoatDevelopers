@@ -1,0 +1,246 @@
+{
+  "name": "Temel İngilizce Kelimeler",
+  "description": "Günlük hayatta sık kullanılan temel İngilizce kelimeler",
+  "words": [
+    {
+      "id": "word1",
+      "word": "a",
+      "meaning": "Used when referring to someone or something for the first time",
+      "turkishMeaning": "bir",
+      "example": "I saw a dog in the park.",
+      "level": "beginner"
+    },
+    {
+      "id": "word2",
+      "word": "about",
+      "meaning": "On the subject of; concerning",
+      "turkishMeaning": "hakkında",
+      "example": "We talked about the weather.",
+      "level": "beginner"
+    },
+    {
+      "id": "word3",
+      "word": "above",
+      "meaning": "In or to a higher place",
+      "turkishMeaning": "yukarıda",
+      "example": "The birds flew above the trees.",
+      "level": "beginner"
+    },
+    {
+      "id": "word4",
+      "word": "able",
+      "meaning": "Having the power, skill, means, or opportunity to do something",
+      "turkishMeaning": "yapabilmek",
+      "example": "She is able to speak five languages.",
+      "level": "beginner"
+    },
+    {
+      "id": "word5",
+      "word": "across",
+      "meaning": "From one side to the other of",
+      "turkishMeaning": "karşıya",
+      "example": "We walked across the bridge.",
+      "level": "beginner"
+    },
+    {
+      "id": "word6",
+      "word": "act",
+      "meaning": "To do something",
+      "turkishMeaning": "davranmak",
+      "example": "You need to act quickly in an emergency.",
+      "level": "beginner"
+    },
+    {
+      "id": "word7",
+      "word": "add",
+      "meaning": "To join or put together",
+      "turkishMeaning": "eklemek",
+      "example": "Add some salt to the soup.",
+      "level": "beginner"
+    },
+    {
+      "id": "word8",
+      "word": "after",
+      "meaning": "Following in time; later than",
+      "turkishMeaning": "sonra",
+      "example": "We'll go for a walk after dinner.",
+      "level": "beginner"
+    },
+    {
+      "id": "word9",
+      "word": "again",
+      "meaning": "Once more; another time",
+      "turkishMeaning": "tekrar",
+      "example": "Can you say that again, please?",
+      "level": "beginner"
+    },
+    {
+      "id": "word10",
+      "word": "against",
+      "meaning": "In opposition to",
+      "turkishMeaning": "karşı",
+      "example": "They played against the champions.",
+      "level": "beginner"
+    },
+    {
+      "id": "word11",
+      "word": "age",
+      "meaning": "The length of time that a person has lived",
+      "turkishMeaning": "yaş",
+      "example": "He is 25 years of age.",
+      "level": "beginner"
+    },
+    {
+      "id": "word12",
+      "word": "ago",
+      "meaning": "Before the present; in the past",
+      "turkishMeaning": "önce",
+      "example": "They left an hour ago.",
+      "level": "beginner"
+    },
+    {
+      "id": "word13",
+      "word": "agree",
+      "meaning": "To have the same opinion",
+      "turkishMeaning": "kabul etmek",
+      "example": "I agree with your suggestion.",
+      "level": "beginner"
+    },
+    {
+      "id": "word14",
+      "word": "air",
+      "meaning": "The invisible gaseous substance surrounding the earth",
+      "turkishMeaning": "hava",
+      "example": "The air is fresh after the rain.",
+      "level": "beginner"
+    },
+    {
+      "id": "word15",
+      "word": "all",
+      "meaning": "The whole quantity or extent of",
+      "turkishMeaning": "hepsi",
+      "example": "All students must attend the meeting.",
+      "level": "beginner"
+    },
+    {
+      "id": "word16",
+      "word": "allow",
+      "meaning": "To give permission for someone to do something",
+      "turkishMeaning": "izin vermek",
+      "example": "Parents should not allow children to play with fire.",
+      "level": "beginner"
+    },
+    {
+      "id": "word17",
+      "word": "almost",
+      "meaning": "Not quite; very nearly",
+      "turkishMeaning": "neredeyse",
+      "example": "It's almost time to go.",
+      "level": "beginner"
+    },
+    {
+      "id": "word18",
+      "word": "alone",
+      "meaning": "Without anyone else",
+      "turkishMeaning": "yalnız",
+      "example": "She lives alone in a small apartment.",
+      "level": "beginner"
+    },
+    {
+      "id": "word19",
+      "word": "along",
+      "meaning": "Moving in a constant direction on",
+      "turkishMeaning": "boyunca",
+      "example": "We walked along the beach.",
+      "level": "beginner"
+    },
+    {
+      "id": "word20",
+      "word": "already",
+      "meaning": "Before or by now or the time in question",
+      "turkishMeaning": "çoktan",
+      "example": "I've already finished my homework.",
+      "level": "beginner"
+    },
+    {
+      "id": "word21",
+      "word": "also",
+      "meaning": "In addition; too",
+      "turkishMeaning": "ayrıca",
+      "example": "She speaks French and also German.",
+      "level": "beginner"
+    },
+    {
+      "id": "word22",
+      "word": "always",
+      "meaning": "At all times; on all occasions",
+      "turkishMeaning": "her zaman",
+      "example": "He always arrives on time.",
+      "level": "beginner"
+    },
+    {
+      "id": "word23",
+      "word": "among",
+      "meaning": "Surrounded by; in the company of",
+      "turkishMeaning": "arasında",
+      "example": "She was among friends at the party.",
+      "level": "beginner"
+    },
+    {
+      "id": "word24",
+      "word": "amount",
+      "meaning": "A quantity of something",
+      "turkishMeaning": "miktar",
+      "example": "A large amount of money was stolen.",
+      "level": "beginner"
+    },
+    {
+      "id": "word25",
+      "word": "and",
+      "meaning": "Used to connect words or groups of words",
+      "turkishMeaning": "ve",
+      "example": "Bread and butter.",
+      "level": "beginner"
+    },
+    {
+      "id": "word26",
+      "word": "angry",
+      "meaning": "Feeling or showing strong annoyance or displeasure",
+      "turkishMeaning": "kızgın",
+      "example": "He was angry about the delay.",
+      "level": "beginner"
+    },
+    {
+      "id": "word27",
+      "word": "animal",
+      "meaning": "A living organism that feeds on organic matter",
+      "turkishMeaning": "hayvan",
+      "example": "The zoo has many different animals.",
+      "level": "beginner"
+    },
+    {
+      "id": "word28",
+      "word": "another",
+      "meaning": "One more; an additional one",
+      "turkishMeaning": "başka bir",
+      "example": "Would you like another cup of tea?",
+      "level": "beginner"
+    },
+    {
+      "id": "word29",
+      "word": "answer",
+      "meaning": "A response to a question",
+      "turkishMeaning": "cevap",
+      "example": "He gave the correct answer to the question.",
+      "level": "beginner"
+    },
+    {
+      "id": "word30",
+      "word": "any",
+      "meaning": "Used to refer to one or some of a thing or number of things",
+      "turkishMeaning": "herhangi bir",
+      "example": "Do you have any questions?",
+      "level": "beginner"
+    }
+  ]
+}
