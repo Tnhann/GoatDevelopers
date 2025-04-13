@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, Card, Button, useTheme, Icon, FAB, Portal, Modal, TextInput, Snackbar, Menu, IconButton } from 'react-native-paper';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
-import { collection, getDocs, addDoc, query, where, doc, setDoc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, query, where, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import { firestore, auth } from '../config/firebase';
 import { ensureDefaultWordLists, getUserWordLists } from '../services/defaultWordListService';
 
@@ -37,42 +37,9 @@ const WordListsScreen = () => {
   });
   const [editingList, setEditingList] = useState<WordList | null>(null);
 
-  // İlk yükleme için useEffect
   useEffect(() => {
     loadWordLists();
   }, []);
-
-  // Ekran odaklandığında listeleri yeniden yükle
-  useFocusEffect(
-    useCallback(() => {
-      console.log('WordListsScreen focused, reloading lists...');
-      loadWordLists();
-      return () => {};
-    }, [])
-  );
-
-  // Her liste için kelime sayısını hesaplayan fonksiyon
-  const getWordCount = async (userId: string, listId: string): Promise<number> => {
-    try {
-      const wordsRef = collection(firestore, 'users', userId, 'wordLists', listId, 'words');
-      const snapshot = await getDocs(wordsRef);
-      return snapshot.size;
-    } catch (error) {
-      console.error(`Error getting word count for list ${listId}:`, error);
-      return 0;
-    }
-  };
-
-  // Kelime sayısını güncelleyen fonksiyon
-  const updateWordCount = async (userId: string, listId: string, count: number) => {
-    try {
-      const listRef = doc(firestore, 'users', userId, 'wordLists', listId);
-      await updateDoc(listRef, { wordCount: count });
-      console.log(`Updated word count for list ${listId}: ${count}`);
-    } catch (error) {
-      console.error(`Error updating word count for list ${listId}:`, error);
-    }
-  };
 
   const loadWordLists = async () => {
     try {
@@ -92,8 +59,7 @@ const WordListsScreen = () => {
       const q = query(collection(firestore, 'users', userId, 'wordLists'));
       const querySnapshot = await getDocs(q);
 
-      // Önce temel liste bilgilerini al
-      let lists = querySnapshot.docs.map(doc => {
+      const lists = querySnapshot.docs.map(doc => {
         const data = doc.data();
         return {
           id: doc.id,
@@ -107,24 +73,7 @@ const WordListsScreen = () => {
         };
       }) as WordList[];
 
-      // Listeleri göster
       setWordLists(lists);
-
-      // Her liste için gerçek kelime sayısını hesapla ve güncelle
-      for (const list of lists) {
-        const count = await getWordCount(userId, list.id);
-
-        // Eğer kelime sayısı farklıysa, veritabanını güncelle
-        if (count !== list.wordCount) {
-          await updateWordCount(userId, list.id, count);
-
-          // Yerel state'i güncelle
-          list.wordCount = count;
-        }
-      }
-
-      // Güncellenmiş kelime sayılarıyla listeleri tekrar ayarla
-      setWordLists([...lists]);
     } catch (error) {
       console.error('Error loading word lists:', error);
       setError('Listeler yüklenirken bir hata oluştu');
@@ -269,21 +218,6 @@ const WordListsScreen = () => {
               <Menu.Item
                 onPress={() => {
                   setMenuVisible(null);
-                  // Düzenleme modalini aç
-                  setNewList({
-                    title: item.title,
-                    description: item.description,
-                    language: item.language
-                  });
-                  setEditingList(item);
-                  setEditModalVisible(true);
-                }}
-                title="Düzenle"
-                leadingIcon="pencil"
-              />
-              <Menu.Item
-                onPress={() => {
-                  setMenuVisible(null);
                   handleDeleteList(item.id);
                 }}
                 title="Sil"
@@ -331,7 +265,6 @@ const WordListsScreen = () => {
       />
 
       <Portal>
-        {/* Yeni Liste Oluşturma Modalı */}
         <Modal
           visible={modalVisible}
           onDismiss={() => setModalVisible(false)}
@@ -366,53 +299,6 @@ const WordListsScreen = () => {
               style={styles.modalButton}
             >
               Oluştur
-            </Button>
-          </View>
-        </Modal>
-
-        {/* Liste Düzenleme Modalı */}
-        <Modal
-          visible={editModalVisible}
-          onDismiss={() => {
-            setEditModalVisible(false);
-            setEditingList(null);
-            setNewList({ title: '', description: '', language: 'english' });
-          }}
-          contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
-        >
-          <Text variant="headlineSmall" style={styles.modalTitle}>Listeyi Düzenle</Text>
-          <TextInput
-            label="Liste Başlığı"
-            value={newList.title}
-            onChangeText={text => setNewList({ ...newList, title: text })}
-            mode="outlined"
-            style={styles.input}
-          />
-          <TextInput
-            label="Açıklama"
-            value={newList.description}
-            onChangeText={text => setNewList({ ...newList, description: text })}
-            mode="outlined"
-            style={styles.input}
-          />
-          <View style={styles.modalButtons}>
-            <Button
-              mode="outlined"
-              onPress={() => {
-                setEditModalVisible(false);
-                setEditingList(null);
-                setNewList({ title: '', description: '', language: 'english' });
-              }}
-              style={styles.modalButton}
-            >
-              İptal
-            </Button>
-            <Button
-              mode="contained"
-              onPress={handleEditList}
-              style={styles.modalButton}
-            >
-              Kaydet
             </Button>
           </View>
         </Modal>

@@ -21,7 +21,7 @@ const HomeScreen = () => {
             color={theme.colors.primary}
           />
           <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
-            Vocaboo
+            WordPecker
           </Text>
           <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
             Kelime öğrenme yolculuğunuza hoş geldiniz
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default HomeScreen; 
