@@ -51,6 +51,10 @@ const QuizModeScreen = () => {
   const handleTimeUp = () => {
     setTimerActive(false);
     setShowResult(true);
+
+    // Doğru cevabı göster
+    console.log('Süre doldu, doğru cevap:', words[currentIndex].translation);
+
     setTimeout(() => {
       handleNext();
     }, 2000);
@@ -67,16 +71,37 @@ const QuizModeScreen = () => {
         const data = doc.data();
         return {
           id: doc.id,
-          word: data.word,
-          translation: data.turkishMeaning || data.translation || '',
+          word: data.word || '',
+          translation: data.turkishMeaning || data.translation || 'Çeviri bulunamadı',
           example: data.example || ''
         };
       }) as Word[];
 
+      console.log('Fetched words:', wordList);
+
       if (wordList.length > 0) {
-        setWords(wordList);
-        generateOptions(wordList);
-        resetTimer();
+        // Boş kelime veya çevirisi olan kelimeleri filtrele
+        const validWords = wordList.filter(word =>
+          word.word && word.word.trim() !== '' &&
+          word.translation && word.translation !== 'Çeviri bulunamadı'
+        );
+
+        console.log('Valid words for quiz:', validWords);
+
+        if (validWords.length > 0) {
+          setWords(validWords);
+
+          // Şıkları oluşturmadan önce kısa bir bekleme ekleyelim
+          setTimeout(async () => {
+            // İlk soru için şıkları oluştur
+            await generateOptions(validWords, 0); // İlk soru için index 0 olarak belirt
+            console.log('Options generated for first question');
+            resetTimer();
+          }, 100);
+        } else {
+          console.error('No valid words found for quiz');
+          // Kullanıcıya bildirim gösterilebilir
+        }
       }
     } catch (error) {
       console.error('Error fetching words:', error);
@@ -88,49 +113,135 @@ const QuizModeScreen = () => {
     setTimerActive(true);
   };
 
-  const generateOptions = (wordList: Word[]) => {
-    if (wordList.length < 4) return;
+  const generateOptions = async (wordList: Word[], questionIndex: number = currentIndex) => {
+    console.log('generateOptions called with wordList length:', wordList.length);
 
-    const currentWord = wordList[currentIndex];
-    const correctAnswer = currentWord.translation;
-
-    // Diğer kelimeleri al ve karıştır
-    const otherWords = wordList.filter((_, index) => index !== currentIndex);
-    const shuffledOtherWords = [...otherWords].sort(() => Math.random() - 0.5);
-
-    // Benzersiz yanlış cevapları topla (doğru cevaptan farklı olmalı)
-    const wrongAnswers: string[] = [];
-    let i = 0;
-
-    // 3 benzersiz yanlış cevap bulana kadar devam et
-    while (wrongAnswers.length < 3 && i < shuffledOtherWords.length) {
-      const translation = shuffledOtherWords[i].translation;
-
-      // Eğer çeviri doğru cevaptan farklıysa ve henüz eklenmemişse ekle
-      if (translation !== correctAnswer && !wrongAnswers.includes(translation)) {
-        wrongAnswers.push(translation);
-      }
-
-      i++;
+    if (wordList.length < 1) {
+      console.error('Word list is empty or too small');
+      return;
     }
 
-    // Eğer yeterli benzersiz yanlış cevap bulunamadıysa, rastgele çeviriler oluştur
+    const currentWord = wordList[questionIndex];
+    console.log('Current word:', currentWord, 'questionIndex:', questionIndex);
+
+    if (!currentWord) {
+      console.error('Current word is undefined, questionIndex:', questionIndex);
+      return;
+    }
+
+    const correctAnswer = currentWord.translation;
+    console.log('Correct answer:', correctAnswer);
+
+    // Diğer kelimeleri al ve karıştır
+    const otherWords = wordList.filter((_, index) => index !== questionIndex);
+    console.log('Other words count:', otherWords.length);
+
+    // Yanlış cevaplar için dizi
+    const wrongAnswers: string[] = [];
+
+    // Eğer başka kelimeler varsa, onları kullan
+    if (otherWords.length > 0) {
+      const shuffledOtherWords = [...otherWords].sort(() => Math.random() - 0.5);
+
+      // Mevcut diğer kelimelerden yanlış cevaplar oluştur
+      let i = 0;
+      while (wrongAnswers.length < 3 && i < shuffledOtherWords.length) {
+        const translation = shuffledOtherWords[i].translation;
+
+        if (translation && translation !== correctAnswer && !wrongAnswers.includes(translation)) {
+          wrongAnswers.push(translation);
+        }
+        i++;
+      }
+    }
+
+    // Yeterli yanlış cevap yoksa, veritabanından rastgele kelimeler kullan
+    // Önce tüm veritabanındaki kelimeleri almaya çalış
+    if (wrongAnswers.length < 3) {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (userId) {
+          // Tüm listeleri al
+          const listsRef = collection(firestore, 'users', userId, 'wordLists');
+          const listsSnapshot = await getDocs(listsRef);
+
+          // Rastgele kelimeler için havuz oluştur
+          const allWords: string[] = [];
+
+          // Her listeden kelimeleri topla
+          for (const listDoc of listsSnapshot.docs) {
+            const wordsRef = collection(firestore, 'users', userId, 'wordLists', listDoc.id, 'words');
+            const wordsSnapshot = await getDocs(wordsRef);
+
+            wordsSnapshot.forEach(wordDoc => {
+              const wordData = wordDoc.data();
+              const translation = wordData.turkishMeaning || wordData.translation;
+
+              // Geçerli bir çeviri varsa ve doğru cevap değilse ve zaten eklenmemişse
+              if (translation &&
+                  translation !== correctAnswer &&
+                  !wrongAnswers.includes(translation) &&
+                  !allWords.includes(translation)) {
+                allWords.push(translation);
+              }
+            });
+          }
+
+          console.log(`Veritabanından ${allWords.length} kelime bulundu`);
+
+          // Rastgele kelimeler seç
+          if (allWords.length > 0) {
+            // Kelimeleri karıştır
+            const shuffledWords = [...allWords].sort(() => Math.random() - 0.5);
+
+            // Gereken sayıda kelime ekle
+            for (let i = 0; i < shuffledWords.length && wrongAnswers.length < 3; i++) {
+              wrongAnswers.push(shuffledWords[i]);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Veritabanından kelimeler alınırken hata oluştu:', error);
+      }
+    }
+
+    // Hala yeterli yanlış cevap yoksa, son çare olarak yapay cevaplar ekle
     while (wrongAnswers.length < 3) {
-      const randomTranslation = `Yanlış Cevap ${wrongAnswers.length + 1}`;
-      wrongAnswers.push(randomTranslation);
+      const randomTranslation = `Kelime ${wrongAnswers.length + 1}`;
+      if (!wrongAnswers.includes(randomTranslation) && randomTranslation !== correctAnswer) {
+        wrongAnswers.push(randomTranslation);
+      }
     }
 
     // Tüm seçenekleri oluştur (doğru cevap + yanlış cevaplar)
-    const allOptions = [...wrongAnswers, correctAnswer];
+    const allOptions = [
+      ...wrongAnswers,
+      correctAnswer  // Doğru cevabı da ekle
+    ];
 
     // Seçenekleri karıştır
-    setOptions(allOptions.sort(() => Math.random() - 0.5));
+    const shuffledOptions = [...allOptions].sort(() => Math.random() - 0.5);
+    console.log('Generated options:', shuffledOptions);
+
+    // Şıkları ayarla
+    setOptions(shuffledOptions);
   };
 
   const handleAnswer = () => {
-    if (selectedAnswer === words[currentIndex].translation) {
+    // Doğru cevabı kontrol et
+    const currentWord = words[currentIndex];
+    const correctAnswer = currentWord.translation;
+
+    console.log('Seçilen cevap:', selectedAnswer);
+    console.log('Doğru cevap:', correctAnswer);
+
+    if (selectedAnswer === correctAnswer) {
       setScore(score + 1);
+      console.log('Doğru cevap verildi! Yeni skor:', score + 1);
+    } else {
+      console.log('Yanlış cevap verildi. Skor değişmedi:', score);
     }
+
     setShowResult(true);
     setTimerActive(false);
   };
@@ -142,65 +253,17 @@ const QuizModeScreen = () => {
       setSelectedAnswer(null);
       setShowResult(false);
 
-      // YENİ EKLENEN: Şıkları manuel olarak güncelle
-      // Yeni indekse göre şıkları oluştur
-      if (words && words.length > newIndex) {
-        const currentWord = words[newIndex];
-        let correctAnswer = currentWord.translation;
+      // Şıkları güncelle
+      console.log('Moving to next question, index:', newIndex);
 
-        // Doğru cevap boş ise varsayılan bir değer ata
-        if (!correctAnswer || correctAnswer.trim() === '') {
-          correctAnswer = 'Çeviri bulunamadı';
-          currentWord.translation = correctAnswer;
+      // Kısa bir bekleme ekleyerek şıkların oluşturulmasını sağla
+      setTimeout(async () => {
+        if (words && words.length > newIndex) {
+          console.log('Generating options for next question, index:', newIndex);
+          await generateOptions(words, newIndex);
         }
-
-        console.log('Yeni soru için doğru cevap:', correctAnswer);
-
-        // Veritabanındaki diğer kelimelerden yanlış cevaplar oluştur
-        const wrongAnswers: string[] = [];
-
-        // Diğer kelimeleri kullan
-        const otherWords = words.filter((_word, index) => index !== newIndex);
-
-        // Eğer yeterli kelime varsa, rastgele 3 tanesini seç
-        if (otherWords.length >= 3) {
-          // Diğer kelimeleri karıştır
-          const shuffledWords = [...otherWords].sort(() => Math.random() - 0.5);
-
-          // İlk 3 kelimeyi al
-          for (let i = 0; i < 3 && i < shuffledWords.length; i++) {
-            const translation = shuffledWords[i].translation;
-
-            // Eğer çeviri doğru cevapla aynı değilse ve daha önce eklenmemişse ekle
-            if (translation && translation !== correctAnswer && !wrongAnswers.includes(translation)) {
-              wrongAnswers.push(translation);
-            }
-          }
-        }
-
-        // Yeterli yanlış cevap yoksa, yapay cevaplar ekle
-        while (wrongAnswers.length < 3) {
-          const randomTranslation = `Yanlış Cevap ${wrongAnswers.length + 1}`;
-          if (!wrongAnswers.includes(randomTranslation) && randomTranslation !== correctAnswer) {
-            wrongAnswers.push(randomTranslation);
-          }
-        }
-
-        // Tüm seçenekleri oluştur (doğru cevap + yanlış cevaplar)
-        const allOptions = [
-          correctAnswer,  // Doğru cevap
-          ...wrongAnswers  // Yanlış cevaplar
-        ];
-
-        // Seçenekleri karıştır
-        const newOptions = [...allOptions].sort(() => Math.random() - 0.5);
-
-        // Şıkları ayarla
-        setOptions(newOptions);
-        console.log('Yeni soru için ayarlanan şıklar:', newOptions);
-      }
-
-      resetTimer();
+        resetTimer();
+      }, 100);
     } else {
       navigation.navigate('QuizResults', {
         score,
