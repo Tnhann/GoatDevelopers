@@ -4,6 +4,7 @@ import { Text, Button, useTheme, Card } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
+import { updateQuizStats } from '../services/statsService';
 
 type QuizResultsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'QuizResults'>;
 
@@ -18,6 +19,11 @@ const QuizResultsScreen = () => {
   };
 
   const percentage = Math.round((score / totalQuestions) * 100);
+
+  React.useEffect(() => {
+    // Quiz sonuçlarını istatistiklere ekle
+    updateQuizStats(score, totalQuestions);
+  }, [score, totalQuestions]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
