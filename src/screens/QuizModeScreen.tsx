@@ -92,13 +92,38 @@ const QuizModeScreen = () => {
     if (wordList.length < 4) return;
 
     const currentWord = wordList[currentIndex];
-    const otherWords = wordList.filter((_, index) => index !== currentIndex);
-    const randomWords = otherWords
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map(word => word.translation);
+    const correctAnswer = currentWord.translation;
 
-    const allOptions = [...randomWords, currentWord.translation];
+    // Diğer kelimeleri al ve karıştır
+    const otherWords = wordList.filter((_, index) => index !== currentIndex);
+    const shuffledOtherWords = [...otherWords].sort(() => Math.random() - 0.5);
+
+    // Benzersiz yanlış cevapları topla (doğru cevaptan farklı olmalı)
+    const wrongAnswers: string[] = [];
+    let i = 0;
+
+    // 3 benzersiz yanlış cevap bulana kadar devam et
+    while (wrongAnswers.length < 3 && i < shuffledOtherWords.length) {
+      const translation = shuffledOtherWords[i].translation;
+
+      // Eğer çeviri doğru cevaptan farklıysa ve henüz eklenmemişse ekle
+      if (translation !== correctAnswer && !wrongAnswers.includes(translation)) {
+        wrongAnswers.push(translation);
+      }
+
+      i++;
+    }
+
+    // Eğer yeterli benzersiz yanlış cevap bulunamadıysa, rastgele çeviriler oluştur
+    while (wrongAnswers.length < 3) {
+      const randomTranslation = `Yanlış Cevap ${wrongAnswers.length + 1}`;
+      wrongAnswers.push(randomTranslation);
+    }
+
+    // Tüm seçenekleri oluştur (doğru cevap + yanlış cevaplar)
+    const allOptions = [...wrongAnswers, correctAnswer];
+
+    // Seçenekleri karıştır
     setOptions(allOptions.sort(() => Math.random() - 0.5));
   };
 

@@ -1,0 +1,246 @@
+{
+  "name": "Günlük Konuşma İngilizcesi",
+  "description": "Günlük hayatta sık kullanılan konuşma İngilizcesi kelimeleri",
+  "words": [
+    {
+      "id": "word1",
+      "word": "hello",
+      "meaning": "Used as a greeting or to begin a telephone conversation",
+      "turkishMeaning": "merhaba",
+      "example": "Hello, how are you today?",
+      "level": "beginner"
+    },
+    {
+      "id": "word2",
+      "word": "goodbye",
+      "meaning": "Used when leaving or ending a conversation",
+      "turkishMeaning": "hoşçakal",
+      "example": "Goodbye, see you tomorrow!",
+      "level": "beginner"
+    },
+    {
+      "id": "word3",
+      "word": "please",
+      "meaning": "Used as a polite way of asking for something or of asking someone to do something",
+      "turkishMeaning": "lütfen",
+      "example": "Could you please help me?",
+      "level": "beginner"
+    },
+    {
+      "id": "word4",
+      "word": "thank you",
+      "meaning": "A polite expression used when acknowledging a gift, service, or compliment",
+      "turkishMeaning": "teşekkür ederim",
+      "example": "Thank you for your help.",
+      "level": "beginner"
+    },
+    {
+      "id": "word5",
+      "word": "sorry",
+      "meaning": "Used as an expression of apology",
+      "turkishMeaning": "üzgünüm",
+      "example": "I'm sorry for being late.",
+      "level": "beginner"
+    },
+    {
+      "id": "word6",
+      "word": "excuse me",
+      "meaning": "Used to politely get someone's attention or to apologize for an interruption",
+      "turkishMeaning": "affedersiniz",
+      "example": "Excuse me, could you tell me the time?",
+      "level": "beginner"
+    },
+    {
+      "id": "word7",
+      "word": "how are you",
+      "meaning": "A friendly greeting asking about someone's well-being",
+      "turkishMeaning": "nasılsın",
+      "example": "Hi, how are you?",
+      "level": "beginner"
+    },
+    {
+      "id": "word8",
+      "word": "fine",
+      "meaning": "In good health; feeling well",
+      "turkishMeaning": "iyi",
+      "example": "I'm fine, thank you.",
+      "level": "beginner"
+    },
+    {
+      "id": "word9",
+      "word": "good morning",
+      "meaning": "A greeting used in the morning",
+      "turkishMeaning": "günaydın",
+      "example": "Good morning! It's a beautiful day.",
+      "level": "beginner"
+    },
+    {
+      "id": "word10",
+      "word": "good afternoon",
+      "meaning": "A greeting used in the afternoon",
+      "turkishMeaning": "tünaydın",
+      "example": "Good afternoon, everyone.",
+      "level": "beginner"
+    },
+    {
+      "id": "word11",
+      "word": "good evening",
+      "meaning": "A greeting used in the evening",
+      "turkishMeaning": "iyi akşamlar",
+      "example": "Good evening, welcome to our restaurant.",
+      "level": "beginner"
+    },
+    {
+      "id": "word12",
+      "word": "good night",
+      "meaning": "A way of saying goodbye at night or before going to bed",
+      "turkishMeaning": "iyi geceler",
+      "example": "Good night, sleep well.",
+      "level": "beginner"
+    },
+    {
+      "id": "word13",
+      "word": "yes",
+      "meaning": "Used to give an affirmative response",
+      "turkishMeaning": "evet",
+      "example": "Yes, I agree with you.",
+      "level": "beginner"
+    },
+    {
+      "id": "word14",
+      "word": "no",
+      "meaning": "Used to give a negative response",
+      "turkishMeaning": "hayır",
+      "example": "No, I don't want to go.",
+      "level": "beginner"
+    },
+    {
+      "id": "word15",
+      "word": "maybe",
+      "meaning": "Perhaps; possibly",
+      "turkishMeaning": "belki",
+      "example": "Maybe I'll go to the party.",
+      "level": "beginner"
+    },
+    {
+      "id": "word16",
+      "word": "of course",
+      "meaning": "Used to emphasize the speaker's belief that something is true or correct",
+      "turkishMeaning": "elbette",
+      "example": "Of course I'll help you.",
+      "level": "beginner"
+    },
+    {
+      "id": "word17",
+      "word": "certainly",
+      "meaning": "Without doubt; definitely",
+      "turkishMeaning": "kesinlikle",
+      "example": "Certainly, I can do that for you.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word18",
+      "word": "absolutely",
+      "meaning": "Without restriction or limitation; completely",
+      "turkishMeaning": "kesinlikle",
+      "example": "Absolutely, that's a great idea.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word19",
+      "word": "nice to meet you",
+      "meaning": "A polite greeting used when meeting someone for the first time",
+      "turkishMeaning": "tanıştığımıza memnun oldum",
+      "example": "Nice to meet you, John.",
+      "level": "beginner"
+    },
+    {
+      "id": "word20",
+      "word": "see you later",
+      "meaning": "A way of saying goodbye, implying that you will meet again soon",
+      "turkishMeaning": "görüşürüz",
+      "example": "I have to go now. See you later!",
+      "level": "beginner"
+    },
+    {
+      "id": "word21",
+      "word": "take care",
+      "meaning": "A friendly way of saying goodbye",
+      "turkishMeaning": "kendine iyi bak",
+      "example": "Take care, and drive safely.",
+      "level": "beginner"
+    },
+    {
+      "id": "word22",
+      "word": "have a nice day",
+      "meaning": "A friendly expression used when saying goodbye to someone during the day",
+      "turkishMeaning": "iyi günler",
+      "example": "Have a nice day! See you tomorrow.",
+      "level": "beginner"
+    },
+    {
+      "id": "word23",
+      "word": "what's up",
+      "meaning": "An informal greeting asking what is happening",
+      "turkishMeaning": "ne haber",
+      "example": "Hey, what's up?",
+      "level": "beginner"
+    },
+    {
+      "id": "word24",
+      "word": "how's it going",
+      "meaning": "An informal greeting asking how someone is doing",
+      "turkishMeaning": "nasıl gidiyor",
+      "example": "Hi there! How's it going?",
+      "level": "beginner"
+    },
+    {
+      "id": "word25",
+      "word": "I don't know",
+      "meaning": "Used to indicate that you do not have the information asked for",
+      "turkishMeaning": "bilmiyorum",
+      "example": "I don't know where the nearest bank is.",
+      "level": "beginner"
+    },
+    {
+      "id": "word26",
+      "word": "I understand",
+      "meaning": "Used to indicate that you comprehend what someone is saying",
+      "turkishMeaning": "anlıyorum",
+      "example": "I understand your concerns.",
+      "level": "beginner"
+    },
+    {
+      "id": "word27",
+      "word": "I agree",
+      "meaning": "Used to indicate that you have the same opinion as someone else",
+      "turkishMeaning": "katılıyorum",
+      "example": "I agree with your suggestion.",
+      "level": "beginner"
+    },
+    {
+      "id": "word28",
+      "word": "I disagree",
+      "meaning": "Used to indicate that you have a different opinion from someone else",
+      "turkishMeaning": "katılmıyorum",
+      "example": "I disagree with your assessment of the situation.",
+      "level": "beginner"
+    },
+    {
+      "id": "word29",
+      "word": "can you help me",
+      "meaning": "A request for assistance",
+      "turkishMeaning": "bana yardım edebilir misin",
+      "example": "Can you help me find my way to the station?",
+      "level": "beginner"
+    },
+    {
+      "id": "word30",
+      "word": "I'd like",
+      "meaning": "Used to express a wish or preference",
+      "turkishMeaning": "isterim",
+      "example": "I'd like a cup of coffee, please.",
+      "level": "beginner"
+    }
+  ]
+}

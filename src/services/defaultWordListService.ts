@@ -23,105 +23,86 @@ export interface Word {
   level?: string;
 }
 
-// Varsayılan kelime listelerini yerel olarak tanımla
+// Data klasöründeki JSON dosyalarından varsayılan kelime listelerini al
 export const fetchDefaultWordLists = async (): Promise<WordList[]> => {
   try {
-    // Realtime Database'e erişim izni olmadığı için varsayılan listeleri burada tanımlıyoruz
+    // JSON dosyalarını import et - Sadece 30 kelimelik listeler
+    const basicEnglish = require('../../data/basic_english.json');
+    const travelEnglish = require('../../data/travel_english.json');
+    const businessEnglish = require('../../data/business_english.json');
+    const educationEnglish = require('../../data/education_english.json');
+    const dailyConversationEnglish = require('../../data/daily_conversation_english.json');
+
+    // WordList formatına dönüştür
     const defaultLists: WordList[] = [
       {
-        id: 'default-english-basics',
-        name: 'Temel İngilizce Kelimeler',
-        description: 'Günlük hayatta sık kullanılan temel İngilizce kelimeler',
-        words: [
-          {
-            id: 'word1',
-            word: 'Hello',
-            meaning: 'A greeting',
-            turkishMeaning: 'Merhaba',
-            example: 'Hello, how are you today?',
-            level: 'beginner'
-          },
-          {
-            id: 'word2',
-            word: 'Goodbye',
-            meaning: 'A farewell',
-            turkishMeaning: 'Hoşçakal',
-            example: 'Goodbye, see you tomorrow!',
-            level: 'beginner'
-          },
-          {
-            id: 'word3',
-            word: 'Thank you',
-            meaning: 'Expression of gratitude',
-            turkishMeaning: 'Teşekkür ederim',
-            example: 'Thank you for your help.',
-            level: 'beginner'
-          },
-          {
-            id: 'word4',
-            word: 'Please',
-            meaning: 'Used to make a request more polite',
-            turkishMeaning: 'Lütfen',
-            example: 'Please pass me the salt.',
-            level: 'beginner'
-          },
-          {
-            id: 'word5',
-            word: 'Sorry',
-            meaning: 'Used to express regret or apologize',
-            turkishMeaning: 'Üzgünüm',
-            example: "I'm sorry for being late.",
-            level: 'beginner'
-          }
-        ],
+        id: 'default-basic-english',
+        name: basicEnglish.name,
+        description: basicEnglish.description,
+        words: basicEnglish.words.map((word: any) => ({
+          id: word.id,
+          word: word.word,
+          meaning: word.meaning,
+          turkishMeaning: word.turkishMeaning,
+          example: word.example,
+          level: word.level
+        })),
         isDefault: true
       },
       {
-        id: 'default-english-travel',
-        name: 'Seyahat İçin İngilizce',
-        description: 'Seyahat ederken kullanışlı olabilecek İngilizce kelimeler',
-        words: [
-          {
-            id: 'word1',
-            word: 'Airport',
-            meaning: 'A place where aircraft take off and land',
-            turkishMeaning: 'Havalimanı',
-            example: 'We need to be at the airport two hours before the flight.',
-            level: 'beginner'
-          },
-          {
-            id: 'word2',
-            word: 'Passport',
-            meaning: 'An official document that identifies you as a citizen of a country',
-            turkishMeaning: 'Pasaport',
-            example: "Don't forget to bring your passport.",
-            level: 'beginner'
-          },
-          {
-            id: 'word3',
-            word: 'Hotel',
-            meaning: 'A place that provides accommodation and meals',
-            turkishMeaning: 'Otel',
-            example: "We're staying at a hotel near the beach.",
-            level: 'beginner'
-          },
-          {
-            id: 'word4',
-            word: 'Ticket',
-            meaning: 'A piece of paper that shows you have paid to enter or travel',
-            turkishMeaning: 'Bilet',
-            example: "I've already bought the train tickets.",
-            level: 'beginner'
-          },
-          {
-            id: 'word5',
-            word: 'Reservation',
-            meaning: 'An arrangement to have something kept for you',
-            turkishMeaning: 'Rezervasyon',
-            example: 'Do you have a reservation for dinner?',
-            level: 'intermediate'
-          }
-        ],
+        id: 'default-travel-english',
+        name: travelEnglish.name,
+        description: travelEnglish.description,
+        words: travelEnglish.words.map((word: any) => ({
+          id: word.id,
+          word: word.word,
+          meaning: word.meaning,
+          turkishMeaning: word.turkishMeaning,
+          example: word.example,
+          level: word.level
+        })),
+        isDefault: true
+      },
+      {
+        id: 'default-business-english',
+        name: businessEnglish.name,
+        description: businessEnglish.description,
+        words: businessEnglish.words.map((word: any) => ({
+          id: word.id,
+          word: word.word,
+          meaning: word.meaning,
+          turkishMeaning: word.turkishMeaning,
+          example: word.example,
+          level: word.level
+        })),
+        isDefault: true
+      },
+      {
+        id: 'default-education-english',
+        name: educationEnglish.name,
+        description: educationEnglish.description,
+        words: educationEnglish.words.map((word: any) => ({
+          id: word.id,
+          word: word.word,
+          meaning: word.meaning,
+          turkishMeaning: word.turkishMeaning,
+          example: word.example,
+          level: word.level
+        })),
+        isDefault: true
+      },
+      {
+        id: 'default-daily-conversation-english',
+        name: dailyConversationEnglish.name,
+        description: dailyConversationEnglish.description,
+        words: dailyConversationEnglish.words.map((word: any) => ({
+          id: word.id,
+          word: word.word,
+          meaning: word.meaning,
+          turkishMeaning: word.turkishMeaning,
+          example: word.example,
+          level: word.level
+        })),
         isDefault: true
       }
     ];

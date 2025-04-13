@@ -1,0 +1,86 @@
+{
+  "name": "İş İngilizcesi Kelimeleri",
+  "description": "İş hayatında sık kullanılan İngilizce kelimeler",
+  "words": [
+    {
+      "id": "word1",
+      "word": "meeting",
+      "meaning": "An assembly of people for discussion or business",
+      "turkishMeaning": "toplantı",
+      "example": "We have a meeting with the clients tomorrow.",
+      "level": "beginner"
+    },
+    {
+      "id": "word2",
+      "word": "deadline",
+      "meaning": "The latest time or date by which something should be completed",
+      "turkishMeaning": "son teslim tarihi",
+      "example": "The deadline for this project is next Friday.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word3",
+      "word": "budget",
+      "meaning": "An estimate of income and expenditure for a set period of time",
+      "turkishMeaning": "bütçe",
+      "example": "We need to stay within our budget.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word4",
+      "word": "negotiate",
+      "meaning": "To try to reach an agreement by discussion",
+      "turkishMeaning": "müzakere etmek",
+      "example": "We need to negotiate better terms.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word5",
+      "word": "contract",
+      "meaning": "A written or spoken agreement intended to be enforceable by law",
+      "turkishMeaning": "sözleşme",
+      "example": "Both parties signed the contract.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word6",
+      "word": "colleague",
+      "meaning": "A person with whom one works in a profession or business",
+      "turkishMeaning": "meslektaş",
+      "example": "My colleagues are very supportive.",
+      "level": "beginner"
+    },
+    {
+      "id": "word7",
+      "word": "salary",
+      "meaning": "A fixed regular payment made by an employer to an employee",
+      "turkishMeaning": "maaş",
+      "example": "He received a salary increase last month.",
+      "level": "beginner"
+    },
+    {
+      "id": "word8",
+      "word": "promotion",
+      "meaning": "The action of raising someone to a higher position or rank",
+      "turkishMeaning": "terfi",
+      "example": "She got a promotion after three years.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word9",
+      "word": "resume",
+      "meaning": "A document containing a summary of a person's education and work experience",
+      "turkishMeaning": "özgeçmiş",
+      "example": "I updated my resume before applying for the job.",
+      "level": "intermediate"
+    },
+    {
+      "id": "word10",
+      "word": "interview",
+      "meaning": "A meeting in which someone is asked questions to see if they are suitable for a job",
+      "turkishMeaning": "mülakat",
+      "example": "I have a job interview tomorrow.",
+      "level": "beginner"
+    }
+  ]
+}
