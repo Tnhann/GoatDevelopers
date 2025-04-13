@@ -118,58 +118,18 @@ const LoginScreen = () => {
             style={[styles.loginButton, { backgroundColor: theme.colors.primary }]}
             loading={loading}
           >
-<<<<<<< HEAD
             Giriş Yap
           </Button>
 
           <View style={styles.registerContainer}>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>
               Hesabınız yok mu?
-=======
-            Sign In
-          </Button>
-
-          <View style={styles.divider}>
-            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
-            <Text style={[styles.dividerText, { color: theme.colors.onSurfaceVariant }]}>
-              or sign in with
-            </Text>
-            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
-          </View>
-
-          <View style={styles.socialButtons}>
-            <Button
-              mode="outlined"
-              onPress={() => {}}
-              style={styles.socialButton}
-              icon="google"
-            >
-              Google
-            </Button>
-            <Button
-              mode="outlined"
-              onPress={() => {}}
-              style={styles.socialButton}
-              icon="apple"
-            >
-              Apple
-            </Button>
-          </View>
-
-          <View style={styles.registerContainer}>
-            <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              Don't have an account?
->>>>>>> Omer
             </Text>
             <Button
               mode="text"
               onPress={() => navigation.navigate('Register')}
             >
-<<<<<<< HEAD
               Kayıt Ol
-=======
-              Sign Up
->>>>>>> Omer
             </Button>
           </View>
         </View>
@@ -179,11 +139,7 @@ const LoginScreen = () => {
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         action={{
-<<<<<<< HEAD
           label: 'Kapat',
-=======
-          label: 'Dismiss',
->>>>>>> Omer
           onPress: () => setSnackbarVisible(false),
         }}
         duration={3000}
@@ -233,32 +189,9 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 8,
-<<<<<<< HEAD
     marginBottom: 24,
   },
 
-=======
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    marginHorizontal: 16,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  socialButton: {
-    flex: 1,
-  },
->>>>>>> Omer
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -267,8 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-<<<<<<< HEAD
 export default LoginScreen;
-=======
-export default LoginScreen;
->>>>>>> Omer

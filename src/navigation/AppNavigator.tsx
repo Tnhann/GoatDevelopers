@@ -36,7 +36,7 @@ export type MainStackParamList = {
   MainTabs: { screen: 'Home' | 'WordLists' | 'Profile' };
   ListDetails: { listId: string };
   QuizMode: { listId: string };
-  QuizResults: { 
+  QuizResults: {
     score: number;
     totalQuestions: number;
     listId: string;
@@ -62,7 +62,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const AuthNavigator = () => {
   const theme = useTheme();
-  
+
   return (
     <AuthStack.Navigator
       screenOptions={{
@@ -75,9 +75,9 @@ const AuthNavigator = () => {
         },
       }}
     >
-      <AuthStack.Screen name="Login" component={LoginScreen} />
-      <AuthStack.Screen name="Register" component={RegisterScreen} />
-      <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <AuthStack.Screen name="Login" component={LoginScreen} options={{ title: 'Giriş' }} />
+      <AuthStack.Screen name="Register" component={RegisterScreen} options={{ title: 'Kayıt Ol' }} />
+      <AuthStack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ title: 'Şifremi Unuttum' }} />
     </AuthStack.Navigator>
   );
 };
@@ -100,6 +100,7 @@ const MainTabs = () => {
         name="Home"
         component={HomeScreen}
         options={{
+          title: 'Ana Ekran',
           tabBarIcon: ({ color, size }) => (
             <Icon name="home" size={size} color={color} />
           ),
@@ -109,6 +110,7 @@ const MainTabs = () => {
         name="WordLists"
         component={WordListsScreen as React.ComponentType<any>}
         options={{
+          title: 'Kelime Listeleri',
           tabBarIcon: ({ color, size }) => (
             <Icon name="book" size={size} color={color} />
           ),
@@ -118,6 +120,7 @@ const MainTabs = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
+          title: 'Profil',
           tabBarIcon: ({ color, size }) => (
             <Icon name="account" size={size} color={color} />
           ),
@@ -174,19 +177,19 @@ const MainNavigator = () => {
         component={StatisticsScreen}
         options={{ title: 'İstatistikler' }}
       />
-      <MainStack.Screen 
-        name="ProfileEdit" 
-        component={ProfileEditScreen} 
+      <MainStack.Screen
+        name="ProfileEdit"
+        component={ProfileEditScreen}
         options={{ title: 'Profili Düzenle' }}
       />
-      <MainStack.Screen 
-        name="About" 
-        component={AboutScreen} 
+      <MainStack.Screen
+        name="About"
+        component={AboutScreen}
         options={{ title: 'Hakkında' }}
       />
-      <MainStack.Screen 
-        name="PrivacyPolicy" 
-        component={PrivacyPolicyScreen} 
+      <MainStack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
         options={{ title: 'Gizlilik Politikası' }}
       />
     </MainStack.Navigator>
@@ -213,4 +216,4 @@ const AppNavigator = () => {
   );
 };
 
-export default AppNavigator; 
+export default AppNavigator;
