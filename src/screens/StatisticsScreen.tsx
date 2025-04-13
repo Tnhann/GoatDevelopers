@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { Text, useTheme, Card, Icon, ActivityIndicator } from 'react-native-paper';
-import { getUserStats } from '../services/statsService';
+import { getUserStats, updateListCountBasedOnActualLists } from '../services/statsService';
 import { auth } from '../config/firebase';
 
 const { width } = Dimensions.get('window');
@@ -20,32 +20,37 @@ const StatisticsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        if (!auth.currentUser) {
-          setError('Kullanıcı girişi yapılmamış');
-          setLoading(false);
-          return;
-        }
-
-        const userStats = await getUserStats();
-        setStats({
-          completedWordModes: userStats.completedWordModes || 0,
-          completedQuizzes: userStats.completedQuizzes || 0,
-          listsCreated: userStats.listsCreated || 0,
-          dailyStreak: userStats.dailyStreak || 0,
-          totalWordsLearned: userStats.totalWordsLearned || 0,
-          totalQuizzesTaken: userStats.totalQuizzesTaken || 0,
-        });
+  const fetchStats = async () => {
+    try {
+      if (!auth.currentUser) {
+        setError('Kullanıcı girişi yapılmamış');
         setLoading(false);
-      } catch (error) {
-        console.error('İstatistikler yüklenirken hata oluştu:', error);
-        setError('İstatistikler yüklenirken hata oluştu');
-        setLoading(false);
+        return;
       }
-    };
 
+      // Önce gerçek liste sayısını ve toplam kelime sayısını güncelle
+      const stats = await updateListCountBasedOnActualLists();
+      console.log('Güncellenen istatistikler:', stats);
+
+      // Sonra güncellenmiş istatistikleri al
+      const userStats = await getUserStats();
+      setStats({
+        completedWordModes: userStats.completedWordModes || 0,
+        completedQuizzes: userStats.completedQuizzes || 0,
+        listsCreated: userStats.listsCreated || 0,
+        dailyStreak: userStats.dailyStreak || 0,
+        totalWordsLearned: userStats.totalWordsLearned || 0,
+        totalQuizzesTaken: userStats.totalQuizzesTaken || 0,
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error('İstatistikler yüklenirken hata oluştu:', error);
+      setError('İstatistikler yüklenirken hata oluştu');
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStats();
   }, []);
 
@@ -140,7 +145,10 @@ const StatisticsScreen = () => {
             </Text>
           </Card.Content>
         </Card>
+
       </View>
+
+
     </ScrollView>
   );
 };
@@ -215,7 +223,7 @@ const styles = StyleSheet.create({
   streakSubtitle: {
     textAlign: 'center',
     marginTop: 8,
-  },
+  }
 });
 
-export default StatisticsScreen; 
+export default StatisticsScreen;

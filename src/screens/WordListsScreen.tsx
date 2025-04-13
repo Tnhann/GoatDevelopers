@@ -7,6 +7,7 @@ import { MainStackParamList } from '../navigation/AppNavigator';
 import { collection, getDocs, addDoc, query, where, doc, setDoc, deleteDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { firestore, auth } from '../config/firebase';
 import { ensureDefaultWordLists, getUserWordLists } from '../services/defaultWordListService';
+import { updateUserStats, decrementListCount } from '../services/statsService';
 
 type WordListsScreenNavigationProp = NativeStackNavigationProp<MainStackParamList, 'MainTabs'>;
 
@@ -162,6 +163,10 @@ const WordListsScreen = () => {
         isDefault: false
       });
 
+      // İstatistikleri güncelle - liste sayısını artır
+      await updateUserStats('list');
+      console.log('Liste oluşturuldu, istatistikler güncellendi');
+
       setNewList({ title: '', description: '', language: 'english' });
       setModalVisible(false);
       loadWordLists();
@@ -206,6 +211,10 @@ const WordListsScreen = () => {
 
       // Sonra listeyi sil
       await deleteDoc(listRef);
+
+      // İstatistikleri güncelle - liste sayısını azalt
+      await decrementListCount();
+      console.log('Liste silindi, istatistikler güncellendi');
 
       // Local state'i güncelle
       setWordLists(prevLists => prevLists.filter(list => list.id !== listId));

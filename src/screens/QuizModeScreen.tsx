@@ -137,10 +137,69 @@ const QuizModeScreen = () => {
 
   const handleNext = () => {
     if (currentIndex < words.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      const newIndex = currentIndex + 1;
+      setCurrentIndex(newIndex);
       setSelectedAnswer(null);
       setShowResult(false);
-      generateOptions(words);
+
+      // YENİ EKLENEN: Şıkları manuel olarak güncelle
+      // Yeni indekse göre şıkları oluştur
+      if (words && words.length > newIndex) {
+        const currentWord = words[newIndex];
+        let correctAnswer = currentWord.translation;
+
+        // Doğru cevap boş ise varsayılan bir değer ata
+        if (!correctAnswer || correctAnswer.trim() === '') {
+          correctAnswer = 'Çeviri bulunamadı';
+          currentWord.translation = correctAnswer;
+        }
+
+        console.log('Yeni soru için doğru cevap:', correctAnswer);
+
+        // Veritabanındaki diğer kelimelerden yanlış cevaplar oluştur
+        const wrongAnswers: string[] = [];
+
+        // Diğer kelimeleri kullan
+        const otherWords = words.filter((_word, index) => index !== newIndex);
+
+        // Eğer yeterli kelime varsa, rastgele 3 tanesini seç
+        if (otherWords.length >= 3) {
+          // Diğer kelimeleri karıştır
+          const shuffledWords = [...otherWords].sort(() => Math.random() - 0.5);
+
+          // İlk 3 kelimeyi al
+          for (let i = 0; i < 3 && i < shuffledWords.length; i++) {
+            const translation = shuffledWords[i].translation;
+
+            // Eğer çeviri doğru cevapla aynı değilse ve daha önce eklenmemişse ekle
+            if (translation && translation !== correctAnswer && !wrongAnswers.includes(translation)) {
+              wrongAnswers.push(translation);
+            }
+          }
+        }
+
+        // Yeterli yanlış cevap yoksa, yapay cevaplar ekle
+        while (wrongAnswers.length < 3) {
+          const randomTranslation = `Yanlış Cevap ${wrongAnswers.length + 1}`;
+          if (!wrongAnswers.includes(randomTranslation) && randomTranslation !== correctAnswer) {
+            wrongAnswers.push(randomTranslation);
+          }
+        }
+
+        // Tüm seçenekleri oluştur (doğru cevap + yanlış cevaplar)
+        const allOptions = [
+          correctAnswer,  // Doğru cevap
+          ...wrongAnswers  // Yanlış cevaplar
+        ];
+
+        // Seçenekleri karıştır
+        const newOptions = [...allOptions].sort(() => Math.random() - 0.5);
+
+        // Şıkları ayarla
+        setOptions(newOptions);
+        console.log('Yeni soru için ayarlanan şıklar:', newOptions);
+      }
+
       resetTimer();
     } else {
       navigation.navigate('QuizResults', {
