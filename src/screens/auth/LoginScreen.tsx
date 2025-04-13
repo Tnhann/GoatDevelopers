@@ -73,16 +73,16 @@ const LoginScreen = () => {
             color={theme.colors.primary}
           />
           <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
-            Welcome Back
+            Hoş Geldiniz
           </Text>
           <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-            Sign in to continue learning
+            Öğrenmeye devam etmek için giriş yapın
           </Text>
         </View>
 
         <View style={styles.form}>
           <TextInput
-            label="Email"
+            label="E-posta"
             value={email}
             onChangeText={setEmail}
             style={styles.input}
@@ -94,7 +94,7 @@ const LoginScreen = () => {
           />
 
           <TextInput
-            label="Password"
+            label="Şifre"
             value={password}
             onChangeText={setPassword}
             style={styles.input}
@@ -109,7 +109,7 @@ const LoginScreen = () => {
             onPress={() => navigation.navigate('ForgotPassword')}
             style={styles.forgotPasswordButton}
           >
-            Forgot Password?
+            Şifremi Unuttum?
           </Button>
 
           <Button
@@ -118,45 +118,18 @@ const LoginScreen = () => {
             style={[styles.loginButton, { backgroundColor: theme.colors.primary }]}
             loading={loading}
           >
-            Sign In
+            Giriş Yap
           </Button>
-
-          <View style={styles.divider}>
-            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
-            <Text style={[styles.dividerText, { color: theme.colors.onSurfaceVariant }]}>
-              or sign in with
-            </Text>
-            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
-          </View>
-
-          <View style={styles.socialButtons}>
-            <Button
-              mode="outlined"
-              onPress={() => {}}
-              style={styles.socialButton}
-              icon="google"
-            >
-              Google
-            </Button>
-            <Button
-              mode="outlined"
-              onPress={() => {}}
-              style={styles.socialButton}
-              icon="apple"
-            >
-              Apple
-            </Button>
-          </View>
 
           <View style={styles.registerContainer}>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              Don't have an account?
+              Hesabınız yok mu?
             </Text>
             <Button
               mode="text"
               onPress={() => navigation.navigate('Register')}
             >
-              Sign Up
+              Kayıt Ol
             </Button>
           </View>
         </View>
@@ -166,7 +139,7 @@ const LoginScreen = () => {
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         action={{
-          label: 'Dismiss',
+          label: 'Kapat',
           onPress: () => setSnackbarVisible(false),
         }}
         duration={3000}
@@ -216,26 +189,9 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginTop: 8,
+    marginBottom: 24,
   },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    marginHorizontal: 16,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  socialButton: {
-    flex: 1,
-  },
+
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -244,4 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen; 
+export default LoginScreen;
