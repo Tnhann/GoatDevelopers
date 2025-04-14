@@ -116,7 +116,7 @@ npx expo start
 ## 👥 Katkıda Bulunanlar
 
 - [Tunahan](https://github.com/Tnhann)
-- [Ömer](https://github.com/OmerY)
+- [Ömer](https://github.com/Nent1907)
 - [Osman](https://github.com/osmanoksuz1)
 - [Serkan](https://github.com/serkannss)
 - [Zeynep](https://github.com/zeyynepkaraduman)
