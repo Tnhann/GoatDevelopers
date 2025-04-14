@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Text, Button, useTheme, Card, Icon, Divider, ActivityIndicator, Surface } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainStackParamList } from '../navigation/AppNavigator';
 import { firestore, auth } from '../config/firebase';
@@ -18,61 +18,71 @@ const HomeScreen = () => {
   const [dailyWord, setDailyWord] = useState<{word: string, translation: string, example: string} | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          // Kullanıcı adını ayarla
-          setUserName(currentUser.displayName || currentUser.email?.split('@')[0] || 'Kullanıcı');
+  const fetchUserData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        // Kullanıcı adını ayarla
+        setUserName(currentUser.displayName || currentUser.email?.split('@')[0] || 'Kullanıcı');
 
-          // Kelime listelerini say
-          const listsRef = collection(firestore, 'users', currentUser.uid, 'wordLists');
-          const listsSnapshot = await getDocs(listsRef);
-          setTotalLists(listsSnapshot.size);
+        // Kelime listelerini say
+        const listsRef = collection(firestore, 'users', currentUser.uid, 'wordLists');
+        const listsSnapshot = await getDocs(listsRef);
+        setTotalLists(listsSnapshot.size);
 
-          // Toplam kelime sayısını hesapla
-          let wordCount = 0;
-          for (const listDoc of listsSnapshot.docs) {
-            const wordsRef = collection(firestore, 'users', currentUser.uid, 'wordLists', listDoc.id, 'words');
-            const wordsSnapshot = await getDocs(wordsRef);
-            wordCount += wordsSnapshot.size;
-          }
-          setTotalWords(wordCount);
+        // Toplam kelime sayısını hesapla
+        let wordCount = 0;
+        for (const listDoc of listsSnapshot.docs) {
+          const wordsRef = collection(firestore, 'users', currentUser.uid, 'wordLists', listDoc.id, 'words');
+          const wordsSnapshot = await getDocs(wordsRef);
+          wordCount += wordsSnapshot.size;
+        }
+        setTotalWords(wordCount);
 
-          // Günün kelimesini al
-          if (wordCount > 0) {
-            // Rastgele bir liste seç
-            const randomListIndex = Math.floor(Math.random() * listsSnapshot.size);
-            const randomListDoc = listsSnapshot.docs[randomListIndex];
+        // Günün kelimesini al
+        if (wordCount > 0) {
+          // Rastgele bir liste seç
+          const randomListIndex = Math.floor(Math.random() * listsSnapshot.size);
+          const randomListDoc = listsSnapshot.docs[randomListIndex];
 
-            // Seçilen listeden rastgele bir kelime al
-            const wordsRef = collection(firestore, 'users', currentUser.uid, 'wordLists', randomListDoc.id, 'words');
-            const wordsSnapshot = await getDocs(wordsRef);
+          // Seçilen listeden rastgele bir kelime al
+          const wordsRef = collection(firestore, 'users', currentUser.uid, 'wordLists', randomListDoc.id, 'words');
+          const wordsSnapshot = await getDocs(wordsRef);
 
-            if (wordsSnapshot.size > 0) {
-              const randomWordIndex = Math.floor(Math.random() * wordsSnapshot.size);
-              const randomWordDoc = wordsSnapshot.docs[randomWordIndex];
-              const wordData = randomWordDoc.data();
+          if (wordsSnapshot.size > 0) {
+            const randomWordIndex = Math.floor(Math.random() * wordsSnapshot.size);
+            const randomWordDoc = wordsSnapshot.docs[randomWordIndex];
+            const wordData = randomWordDoc.data();
 
-              setDailyWord({
-                word: wordData.word || '',
-                translation: wordData.turkishMeaning || wordData.translation || '',
-                example: wordData.example || ''
-              });
-            }
+            setDailyWord({
+              word: wordData.word || '',
+              translation: wordData.turkishMeaning || wordData.translation || '',
+              example: wordData.example || ''
+            });
           }
         }
-      } catch (error) {
-        console.error('Kullanıcı verileri alınırken hata oluştu:', error);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchUserData();
+    } catch (error) {
+      console.error('Kullanıcı verileri alınırken hata oluştu:', error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Uygulama ilk açıldığında verileri yükle
+  useEffect(() => {
+    fetchUserData();
+  }, [fetchUserData]);
+
+  // Ekran her odaklandığında verileri güncelle
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Ana ekran odaklandı, veriler güncelleniyor...');
+      fetchUserData();
+      return () => {};
+    }, [fetchUserData])
+  );
 
   if (loading) {
     return (
