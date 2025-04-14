@@ -113,18 +113,13 @@ npx expo start
   - `/context`: Context API tanımlamaları
   - `/types`: TypeScript tip tanımlamaları
 
-## 📜 Lisans
-
-Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
-
 ## 👥 Katkıda Bulunanlar
 
 - [Tunahan](https://github.com/Tnhann)
 - [Ömer](https://github.com/omerfarukose)
-
-## 📞 İletişim
-
-Sorularınız veya geri bildirimleriniz için [issues](https://github.com/Tnhann/GoatDevelopers/issues) bölümünü kullanabilirsiniz.
+- [Osman](https://github.com/osmanerol)
+- [Serkan](https://github.com/serkanc7)
+- [Zeynep](https://github.com/zeynepkicikoglu)
 
 ---
 
