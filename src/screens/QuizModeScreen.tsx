@@ -207,7 +207,7 @@ const QuizModeScreen = () => {
 
     // Hala yeterli yanlış cevap yoksa, son çare olarak yapay cevaplar ekle
     while (wrongAnswers.length < 3) {
-      const randomTranslation = `Kelime ${wrongAnswers.length + 1}`;
+      const randomTranslation = `Seçenek ${wrongAnswers.length + 1}`;
       if (!wrongAnswers.includes(randomTranslation) && randomTranslation !== correctAnswer) {
         wrongAnswers.push(randomTranslation);
       }

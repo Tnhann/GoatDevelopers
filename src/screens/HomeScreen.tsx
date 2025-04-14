@@ -158,23 +158,6 @@ const HomeScreen = () => {
 
           <Card style={styles.card}>
             <Card.Content>
-              <Icon source="plus" size={40} color={theme.colors.primary} />
-              <Text variant="titleMedium" style={styles.cardTitle}>Yeni Liste</Text>
-              <Text variant="bodyMedium" style={styles.cardText}>
-                Yeni bir kelime listesi oluşturun
-              </Text>
-              <Button
-                mode="contained"
-                onPress={() => navigation.navigate('MainTabs', { screen: 'WordLists' })}
-                style={styles.cardButton}
-              >
-                Liste Oluştur
-              </Button>
-            </Card.Content>
-          </Card>
-
-          <Card style={styles.card}>
-            <Card.Content>
               <Icon source="gamepad-variant" size={40} color={theme.colors.primary} />
               <Text variant="titleMedium" style={styles.cardTitle}>Quiz Modu</Text>
               <Text variant="bodyMedium" style={styles.cardText}>
@@ -184,8 +167,8 @@ const HomeScreen = () => {
                 mode="contained"
                 onPress={() => {
                   if (totalLists > 0) {
-                    // Kullanıcının ilk listesini bul ve quiz modunu başlat
-                    const fetchFirstList = async () => {
+                    // Kullanıcının rastgele bir listesini seç ve quiz modunu başlat
+                    const fetchRandomList = async () => {
                       try {
                         const userId = auth.currentUser?.uid;
                         if (userId) {
@@ -193,8 +176,13 @@ const HomeScreen = () => {
                           const listsSnapshot = await getDocs(listsRef);
 
                           if (listsSnapshot.size > 0) {
-                            const firstListId = listsSnapshot.docs[0].id;
-                            navigation.navigate('QuizMode', { listId: firstListId });
+                            // Rastgele bir liste seç
+                            const randomIndex = Math.floor(Math.random() * listsSnapshot.size);
+                            const randomListId = listsSnapshot.docs[randomIndex].id;
+                            const randomListName = listsSnapshot.docs[randomIndex].data().name || 'Liste';
+
+                            console.log(`Rastgele seçilen liste: ${randomListName} (${randomListId})`);
+                            navigation.navigate('QuizMode', { listId: randomListId });
                           }
                         }
                       } catch (error) {
@@ -202,7 +190,7 @@ const HomeScreen = () => {
                       }
                     };
 
-                    fetchFirstList();
+                    fetchRandomList();
                   } else {
                     // Kullanıcının listesi yoksa, liste oluşturma sayfasına yönlendir
                     navigation.navigate('MainTabs', { screen: 'WordLists' });

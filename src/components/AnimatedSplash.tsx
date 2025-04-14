@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Image, StyleSheet, Animated, Dimensions, StatusBar, Text } from 'react-native';
+import { View, Image, StyleSheet, Animated, Dimensions, StatusBar, Text, Easing } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -12,54 +12,60 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onAnimationComplete }) 
   const scaleValue = useRef(new Animated.Value(0.1)).current; // Küçük başlangıç değeri
   const opacityValue = useRef(new Animated.Value(1)).current;
   const loadingBarWidth = useRef(new Animated.Value(0)).current;
-  
+  // Nabız efekti kaldırıldı
+
   // Arka plan rengi animasyonu için
   const bgColorValue = useRef(new Animated.Value(0)).current;
-  
+
   // Logo için optimal boyut hesaplaması - En büyük ölçek
-  const logoSize = Math.min(width, height) * 1.1; // Ekrandan bile biraz büyük olsun
-  
+  const logoSize = Math.min(width, height) * 0.8; // Ekranın %80'i kadar
+
   // Yükleme çubuğu genişliği
   const barWidth = width * 0.85; // Ekran genişliğinin %85'i
 
   // Animasyon süreleri - Daha hızlı
-  const loadingDuration = 3200; // Yükleme çubuğu dolma süresi (ms)
-  const logoScaleDuration = 3000; // Logo büyüme süresi (ms)
+  const loadingDuration = 3000; // Yükleme çubuğu dolma süresi (ms)
+  const logoScaleDuration = 2800; // Logo büyüme süresi (ms)
   const fadeOutDuration = 800; // Kaybolma süresi (ms)
-
   useEffect(() => {
     // İlk açılışta StatusBar'ı gizleyelim
     StatusBar.setHidden(true);
-    
+
     // Önce yükleme çubuğunun tamamen dolmasını sağlayalım
     Animated.timing(loadingBarWidth, {
       toValue: 1, // 1 = %100 dolu
       duration: loadingDuration,
+      easing: Easing.inOut(Easing.cubic), // Daha akıcı bir hareket
       useNativeDriver: false,
     }).start();
-    
+
+    // Nabız efekti kaldırıldı
+
     // Logo animasyonunu ve çubuk tamamlandıktan sonraki adımları ayarlayalım
     Animated.sequence([
       // Logo küçükten büyüğe animasyonu - yükleme çubuğuyla paralel
       Animated.timing(scaleValue, {
         toValue: 1,
-        duration: logoScaleDuration, // Yükleme çubuğundan biraz önce bitsin
+        duration: logoScaleDuration,
+        easing: Easing.out(Easing.back(1.5)), // Biraz sıçrama efekti
         useNativeDriver: true,
       }),
-      
+
       // Çubuğun tamamen dolması için ek bekleme - daha kısa
-      Animated.delay(300),
-      
+      Animated.delay(200),
+
       // Logo ve yükleme çubuğunun kaybolması - daha hızlı
       Animated.parallel([
         Animated.timing(opacityValue, {
           toValue: 0,
           duration: fadeOutDuration,
+          easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.timing(bgColorValue, {
           toValue: 1,
           duration: fadeOutDuration,
+          easing: Easing.out(Easing.cubic),
           useNativeDriver: false,
         })
       ])
@@ -69,7 +75,7 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onAnimationComplete }) 
       // Callback fonksiyonunu çağır
       onAnimationComplete();
     });
-    
+
     // Component unmount olduğunda temizleme işlemi
     return () => {
       StatusBar.setHidden(false);
@@ -79,7 +85,7 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onAnimationComplete }) 
   // Arka plan rengi interpolasyonu - beyazdan başlayıp uygulamanızın ana rengine doğru değişim
   const backgroundColor = bgColorValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#ffffff', '#ffffff'] 
+    outputRange: ['#ffffff', '#ffffff']
   });
 
   // Yükleme çubuğunun genişliği için interpolasyon
@@ -96,7 +102,7 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onAnimationComplete }) 
           {
             opacity: opacityValue,
             transform: [
-              { scale: scaleValue }, // Sadece ölçeklendirme animasyonu - dönme yok
+              { scale: scaleValue }
             ],
           },
         ]}
@@ -109,20 +115,28 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onAnimationComplete }) 
 
         {/* Yükleme durumu görsel göstergesi (bar) */}
         <View style={styles.loadingBarContainer}>
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.loadingBar, 
-              { 
+              styles.loadingBar,
+              {
                 width: loadingWidth,
                 backgroundColor: '#4A90E2'
               }
-            ]} 
+            ]}
           />
+
+          {/* Yükleme yüzdesi */}
+          <Animated.Text style={styles.loadingPercentage}>
+            {loadingBarWidth.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0%', '100%']
+            })}
+          </Animated.Text>
         </View>
-        
+
         {/* Yükleniyor yazısı */}
         <Animated.Text style={[styles.loadingText, { opacity: opacityValue }]}>
-          Yükleniyor...
+          Vocaboo yükleniyor...
         </Animated.Text>
       </Animated.View>
     </Animated.View>
@@ -146,32 +160,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '100%',
-    paddingHorizontal: 10, // Daha az kenar boşluğu
+    paddingHorizontal: 10,
   },
   logo: {
     maxWidth: '100%',
-    maxHeight: '80%', // Ekranın %80'ini kapla
+    maxHeight: '80%',
   },
   loadingBarContainer: {
     position: 'absolute',
-    bottom: height * 0.15, // Ekranın altından %15 yukarıda
-    height: 14, // Daha kalın bar
-    width: width * 0.85, // Ekran genişliğinin %85'i
-    backgroundColor: '#E0E0E0', // Boş bar rengi
-    borderRadius: 7,
+    bottom: height * 0.15,
+    height: 16, // Daha kalın bar
+    width: width * 0.85,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 8,
     overflow: 'hidden',
+    flexDirection: 'row', // Yükleme yüzdesi için
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D0D0D0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   loadingBar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
     height: '100%',
-    width: 0, // Başlangıçta 0, animasyonla değişecek
-    borderRadius: 7,
+    width: 0,
+    borderRadius: 8,
+  },
+  loadingPercentage: {
+    color: '#333',
+    fontSize: 12,
+    fontWeight: 'bold',
+    zIndex: 1, // Yükleme çubuğunun üzerinde görünmesi için
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 3,
   },
   loadingText: {
     position: 'absolute',
-    bottom: height * 0.1, // Yükleme çubuğunun altında
-    color: '#555',
-    fontSize: 20, // Büyük font
-    fontWeight: '600', // Kalın yazı
+    bottom: height * 0.1,
+    color: '#333',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textShadowColor: 'rgba(255, 255, 255, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   }
 });
 

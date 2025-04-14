@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Text, TextInput, Button, useTheme, ActivityIndicator, Snackbar, Icon } from 'react-native-paper';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../config/firebase';
@@ -54,22 +54,22 @@ const ForgotPasswordScreen = () => {
     <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Icon
-            source="book-open-page-variant"
-            size={80}
-            color={theme.colors.primary}
+          <Image
+            source={require('../../../assets/logo3.png')}
+            style={styles.logo}
+            resizeMode="contain"
           />
           <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
-            Forgot Password
+            Şifremi Unuttum
           </Text>
           <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-            Enter your email address to reset your password
+            Şifrenizi sıfırlamak için e-posta adresinizi girin
           </Text>
         </View>
 
         <View style={styles.form}>
           <TextInput
-            label="Email"
+            label="E-posta"
             value={email}
             onChangeText={setEmail}
             style={styles.input}
@@ -86,7 +86,7 @@ const ForgotPasswordScreen = () => {
             style={[styles.resetButton, { backgroundColor: theme.colors.primary }]}
             loading={loading}
           >
-            Reset Password
+            Şifremi Sıfırla
           </Button>
 
           <View style={styles.backToLoginContainer}>
@@ -94,7 +94,7 @@ const ForgotPasswordScreen = () => {
               mode="text"
               onPress={() => navigation.navigate('Login')}
             >
-              Back to Login
+              Girişe Dön
             </Button>
           </View>
         </View>
@@ -131,10 +131,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     marginBottom: 32,
+    marginTop: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 180,
+    height: 180,
     marginBottom: 16,
   },
   title: {
@@ -159,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen; 
+export default ForgotPasswordScreen;

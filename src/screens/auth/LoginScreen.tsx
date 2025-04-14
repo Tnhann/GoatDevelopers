@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Text, TextInput, Button, useTheme, ActivityIndicator, Snackbar, Icon } from 'react-native-paper';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../config/firebase';
@@ -17,6 +17,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const getErrorMessage = (error: any) => {
     switch (error.code) {
@@ -67,10 +68,10 @@ const LoginScreen = () => {
     <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Icon
-            source="book-open-page-variant"
-            size={80}
-            color={theme.colors.primary}
+          <Image
+            source={require('../../../assets/logo3.png')}
+            style={styles.logo}
+            resizeMode="contain"
           />
           <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
             Hoş Geldiniz
@@ -121,6 +122,39 @@ const LoginScreen = () => {
             Giriş Yap
           </Button>
 
+          <View style={styles.divider}>
+            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
+            <Text style={[styles.dividerText, { color: theme.colors.onSurfaceVariant }]}>
+              veya şunlarla giriş yap
+            </Text>
+            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
+          </View>
+
+          <View style={styles.socialButtons}>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setSnackbarMessage('Google ile giriş yakında aktif olacak');
+                setSnackbarVisible(true);
+              }}
+              style={styles.socialButton}
+              icon="google"
+            >
+              Google
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setSnackbarMessage('Apple ile giriş yakında aktif olacak');
+                setSnackbarVisible(true);
+              }}
+              style={styles.socialButton}
+              icon="apple"
+            >
+              Apple
+            </Button>
+          </View>
+
           <View style={styles.registerContainer}>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>
               Hesabınız yok mu?
@@ -144,7 +178,7 @@ const LoginScreen = () => {
         }}
         duration={3000}
       >
-        {error}
+        {snackbarMessage || error}
       </Snackbar>
     </ScrollView>
   );
@@ -165,10 +199,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     marginBottom: 32,
+    marginTop: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 180,
+    height: 180,
     marginBottom: 16,
   },
   title: {
@@ -192,6 +227,28 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
 
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+  },
+  dividerText: {
+    marginHorizontal: 8,
+    fontSize: 12,
+  },
+  socialButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  socialButton: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

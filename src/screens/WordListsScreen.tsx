@@ -34,7 +34,7 @@ const WordListsScreen = () => {
   const [newList, setNewList] = useState({
     title: '',
     description: '',
-    language: 'english'
+    language: 'türkçe'
   });
   const [editingList, setEditingList] = useState<WordList | null>(null);
 
@@ -101,7 +101,7 @@ const WordListsScreen = () => {
           title: data.name,
           description: data.description,
           wordCount: data.wordCount || 0,
-          language: data.language || 'english',
+          language: data.language || 'türkçe',
           userId: userId,
           createdAt: data.createdAt?.toDate() || new Date(),
           isDefault: data.isDefault || false
@@ -385,7 +385,7 @@ const WordListsScreen = () => {
           onDismiss={() => {
             setEditModalVisible(false);
             setEditingList(null);
-            setNewList({ title: '', description: '', language: 'english' });
+            setNewList({ title: '', description: '', language: 'türkçe' });
           }}
           contentContainerStyle={[styles.modal, { backgroundColor: theme.colors.background }]}
         >
@@ -410,7 +410,7 @@ const WordListsScreen = () => {
               onPress={() => {
                 setEditModalVisible(false);
                 setEditingList(null);
-                setNewList({ title: '', description: '', language: 'english' });
+                setNewList({ title: '', description: '', language: 'türkçe' });
               }}
               style={styles.modalButton}
             >

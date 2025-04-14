@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Text, TextInput, Button, useTheme, ActivityIndicator, Snackbar, Icon } from 'react-native-paper';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -20,6 +20,7 @@ const RegisterScreen = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -92,22 +93,22 @@ const RegisterScreen = () => {
     <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Icon
-            source="book-open-page-variant"
-            size={80}
-            color={theme.colors.primary}
+          <Image
+            source={require('../../../assets/logo3.png')}
+            style={styles.logo}
+            resizeMode="contain"
           />
           <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onBackground }]}>
-            Create Account
+            Hesap Oluştur
           </Text>
           <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-            Start your language learning journey
+            Kelime öğrenme yolculuğunuza başlayın
           </Text>
         </View>
 
         <View style={styles.form}>
           <TextInput
-            label="Full Name"
+            label="Ad Soyad"
             value={name}
             onChangeText={setName}
             style={styles.input}
@@ -117,7 +118,7 @@ const RegisterScreen = () => {
           />
 
           <TextInput
-            label="Email"
+            label="E-posta"
             value={email}
             onChangeText={setEmail}
             style={styles.input}
@@ -129,7 +130,7 @@ const RegisterScreen = () => {
           />
 
           <TextInput
-            label="Password"
+            label="Şifre"
             value={password}
             onChangeText={setPassword}
             style={styles.input}
@@ -146,7 +147,7 @@ const RegisterScreen = () => {
           />
 
           <TextInput
-            label="Confirm Password"
+            label="Şifre Tekrarı"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             style={styles.input}
@@ -168,45 +169,18 @@ const RegisterScreen = () => {
             style={[styles.registerButton, { backgroundColor: theme.colors.primary }]}
             loading={loading}
           >
-            Create Account
+            Hesap Oluştur
           </Button>
-
-          <View style={styles.divider}>
-            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
-            <Text style={[styles.dividerText, { color: theme.colors.onSurfaceVariant }]}>
-              or sign up with
-            </Text>
-            <View style={[styles.line, { backgroundColor: theme.colors.outline }]} />
-          </View>
-
-          <View style={styles.socialButtons}>
-            <Button
-              mode="outlined"
-              onPress={() => {}}
-              style={styles.socialButton}
-              icon="google"
-            >
-              Google
-            </Button>
-            <Button
-              mode="outlined"
-              onPress={() => {}}
-              style={styles.socialButton}
-              icon="apple"
-            >
-              Apple
-            </Button>
-          </View>
 
           <View style={styles.loginContainer}>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>
-              Already have an account?
+              Zaten hesabınız var mı?
             </Text>
             <Button
               mode="text"
               onPress={() => navigation.navigate('Login')}
             >
-              Sign In
+              Giriş Yap
             </Button>
           </View>
         </View>
@@ -216,12 +190,12 @@ const RegisterScreen = () => {
         visible={snackbarVisible}
         onDismiss={() => setSnackbarVisible(false)}
         action={{
-          label: 'Dismiss',
+          label: 'Kapat',
           onPress: () => setSnackbarVisible(false),
         }}
         duration={3000}
       >
-        {error}
+        {snackbarMessage || error}
       </Snackbar>
     </ScrollView>
   );
@@ -242,10 +216,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     marginBottom: 32,
+    marginTop: 20,
   },
   logo: {
-    width: 120,
-    height: 120,
+    width: 180,
+    height: 180,
     marginBottom: 16,
   },
   title: {
@@ -264,25 +239,7 @@ const styles = StyleSheet.create({
   registerButton: {
     marginTop: 8,
   },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 24,
-  },
-  line: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    marginHorizontal: 16,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  socialButton: {
-    flex: 1,
-  },
+
   loginContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -291,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen; 
+export default RegisterScreen;
