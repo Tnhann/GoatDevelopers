@@ -1,7 +1,7 @@
 # Vocaboo - Kelime Öğrenme Uygulaması
 
 <div align="center">
-  <img src="assets/logo3.png" alt="Vocaboo Logo" width="200"/>
+  <img src="assets/Logo.png" alt="Vocaboo Logo" width="200"/>
 </div>
 
 ## 📱 Uygulama Hakkında
@@ -116,10 +116,10 @@ npx expo start
 ## 👥 Katkıda Bulunanlar
 
 - [Tunahan](https://github.com/Tnhann)
-- [Ömer](https://github.com/omerfarukose)
-- [Osman](https://github.com/osmanerol)
-- [Serkan](https://github.com/serkanc7)
-- [Zeynep](https://github.com/zeynepkicikoglu)
+- [Ömer](https://github.com/OmerY)
+- [Osman](https://github.com/osmanoksuz1)
+- [Serkan](https://github.com/serkannss)
+- [Zeynep](https://github.com/zeyynepkaraduman)
 
 ---
 
