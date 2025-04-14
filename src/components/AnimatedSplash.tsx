@@ -18,7 +18,7 @@ const AnimatedSplash: React.FC<AnimatedSplashProps> = ({ onAnimationComplete }) 
   const bgColorValue = useRef(new Animated.Value(0)).current;
 
   // Logo için optimal boyut hesaplaması - En büyük ölçek
-  const logoSize = Math.min(width, height) * 0.8; // Ekranın %80'i kadar
+  const logoSize = Math.min(width, height) * 0.9; // Ekranın %90'i kadar
 
   // Yükleme çubuğu genişliği
   const barWidth = width * 0.85; // Ekran genişliğinin %85'i
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   loadingBarContainer: {
     position: 'absolute',
-    bottom: height * 0.15,
+    bottom: height * 0.25, // Resme daha yakın olması için yukarı taşındı
     height: 16, // Daha kalın bar
     width: width * 0.85,
     backgroundColor: '#E0E0E0',
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     position: 'absolute',
-    bottom: height * 0.1,
+    bottom: height * 0.2, // Yükleme çubuğuyla uyumlu olması için yukarı taşındı
     color: '#333',
     fontSize: 22,
     fontWeight: 'bold',
